@@ -1,21 +1,19 @@
-import { Link } from 'react-router-dom';
-import { useState } from 'react';
+import { Link, useHistory } from 'react-router-dom';
+import { useForm } from 'react-hook-form';
 import { useAuth } from '../../providers/auth';
 
 
 const Login = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const { register, handleSubmit, errors } = useForm();
   const { login } = useAuth();
+  const history = useHistory();
 
 
-  const loginUser = async (event) => {
-    event.preventDefault();
-
-    console.log(email, password);
-    await login({ email, password })
+  const loginUser = async (data) => {
+    console.log(data);
+    await login(data);
+     history.push("/");
   }
-
 
   return (
     <div className="account-page">
@@ -29,15 +27,16 @@ const Login = () => {
               <div className="account-wrapper">
                 <h3 className="account-title">Login</h3>
                 <p className="account-subtitle">Access to our dashboard</p>
-                <form onSubmit={loginUser}>
+                <form onSubmit={handleSubmit(loginUser)}>
                   <div className="form-group">
-                    <label>Email Address</label>
+                    <label>Username</label>
                     <input
                       className="form-control"
                       type="text"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
+                      name="username"
+                      ref={register({ required: 'This field is required' })}
                     />
+                    {errors.username && <p className="text-danger">{errors.username.message}</p>}
                   </div>
                   <div className="form-group">
                     <div className="row">
@@ -53,9 +52,10 @@ const Login = () => {
                     <input
                       className="form-control"
                       type="password"
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
+                      name="password"
+                      ref={register({ required: 'This field is required' })}
                     />
+                    {errors.password && <p className="text-danger">{errors.password.message}</p>}
                   </div>
                   <div className="form-group text-center">
                     <button className="btn btn-primary account-btn" type="submit">Login</button>
