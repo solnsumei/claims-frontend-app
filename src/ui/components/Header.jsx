@@ -1,7 +1,10 @@
 import { Link } from 'react-router-dom';
+import { useAuth } from '../../providers/auth';
 
 
 const Header = () => {
+	const { logoutUser } = useAuth();
+
   return (
     <div className="header">
 				<div className="header-left">
@@ -143,7 +146,7 @@ const Header = () => {
 						<div className="dropdown-menu">
 							<Link className="dropdown-item" to="/profile">My Profile</Link>
 							<Link className="dropdown-item" to="/settings">Settings</Link>
-							<Link className="dropdown-item" to="/login">Logout</Link>
+							<Link className="dropdown-item" to="#" onClick={() => logoutUser()}>Logout</Link>
 						</div>
 					</li>
 				</ul>
@@ -152,7 +155,7 @@ const Header = () => {
 					<div className="dropdown-menu dropdown-menu-right">
 						<Link className="dropdown-item" to="/profile">My Profile</Link>
 						<Link className="dropdown-item" to="/settings">Settings</Link>
-						<Link className="dropdown-item" to="/login">Logout</Link>
+						<Link className="dropdown-item" to="#" onClick={() => logoutUser()}>Logout</Link>
 					</div>
 				</div>
 			</div>

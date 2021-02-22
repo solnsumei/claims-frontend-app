@@ -1,18 +1,27 @@
+import { useState } from 'react';
 import { Link, useHistory } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { useAuth } from '../../providers/auth';
+import { loginResolver } from '../../utils/validators';
 
 
 const Login = () => {
-  const { register, handleSubmit, errors } = useForm();
-  const { login } = useAuth();
+  const  [error, setError] = useState(null); 
+  const { register, handleSubmit, errors } = useForm({
+    resolver: loginResolver(),
+  });
+
+  const { loginUser } = useAuth();
   const history = useHistory();
 
 
-  const loginUser = async (data) => {
-    console.log(data);
-    await login(data);
-     history.push("/");
+  const submitForm = async (data) => {
+    try {
+      await loginUser(data);
+      history.push("/");
+    } catch (e) {
+      setError(e.response.data.detail);
+    }
   }
 
   return (
@@ -27,14 +36,25 @@ const Login = () => {
               <div className="account-wrapper">
                 <h3 className="account-title">Login</h3>
                 <p className="account-subtitle">Access to our dashboard</p>
-                <form onSubmit={handleSubmit(loginUser)}>
+                {error && <div className="alert alert-danger alert-dismissible fade show" role="alert">
+                  {error}
+								  <button 
+                    type="button"
+                    className="close"
+                    data-dismiss="alert"
+                    aria-label="Close"
+                    onClick={() => setError(null)}>
+                    <span aria-hidden="true">×</span>
+                  </button>
+                </div>}
+                <form onSubmit={handleSubmit(submitForm)}>
                   <div className="form-group">
                     <label>Username</label>
                     <input
                       className="form-control"
                       type="text"
                       name="username"
-                      ref={register({ required: 'This field is required' })}
+                      ref={register}
                     />
                     {errors.username && <p className="text-danger">{errors.username.message}</p>}
                   </div>
@@ -53,7 +73,7 @@ const Login = () => {
                       className="form-control"
                       type="password"
                       name="password"
-                      ref={register({ required: 'This field is required' })}
+                      ref={register}
                     />
                     {errors.password && <p className="text-danger">{errors.password.message}</p>}
                   </div>

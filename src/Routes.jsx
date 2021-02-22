@@ -1,6 +1,7 @@
-import { Route, Switch } from 'react-router-dom';
+import { Switch } from 'react-router-dom';
 import AppLayout from './ui/layouts/AppLayout';
 import AuthenticatedRoute from './middlewares/AuthenticatedRoute';
+import GuestRoute from './middlewares/GuestRoute';
 import Home from './ui/pages/Home';
 import Login from './ui/pages/Login';
 import Profile from './ui/pages/Profile';
@@ -8,9 +9,9 @@ import Profile from './ui/pages/Profile';
 const Routes = () => {
   return (
     <Switch>
-      <Route path="/login">
+      <GuestRoute path="/login">
         <Login />
-      </Route>
+      </GuestRoute>
       <Switch>
         <AppLayout>
           <AuthenticatedRoute exact path="/">
