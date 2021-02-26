@@ -7,11 +7,12 @@ const Header = () => {
 
 	const { username } = isAuthenticated();
 
-  return (
-    <div className="header">
+	return (
+		<>
+			{ username && (<div className="header">
 				<div className="header-left">
 					<Link to="/" className="logo">
-						<img src="/logo.png" alt="CLA" className="logo-img"/>
+						<img src="/logo.png" alt="CLA" className="logo-img" />
 					</Link>
 				</div>
 				<span id="toggle_btn">
@@ -26,7 +27,8 @@ const Header = () => {
 					<h3>Claims App</h3>
 				</div>
 
-				<a id="mobile_btn" className="mobile_btn" href="#sidebar"><i className="fa fa-bars"></i></a>
+				<Link id="mobile_btn" className="mobile_btn" to="#sidebar"><i className="fa fa-bars"></i></Link>
+
 
 				<ul className="nav user-menu">
 
@@ -160,8 +162,9 @@ const Header = () => {
 						<Link className="dropdown-item" to="#" onClick={() => logoutUser()}>Logout</Link>
 					</div>
 				</div>
-			</div>
-  );
+			</div>) }
+		</>
+	);
 }
- 
+
 export default Header;

@@ -43,7 +43,7 @@ const DepartmentForm = ({ department, isOpen, closeModal }) => {
         centered
       >
         <Modal.Header closeButton>
-          <Modal.Title>{ department?.id ? 'Edit' : 'Add'} Department</Modal.Title>
+          <Modal.Title>Add Department</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <Form method="post" onSubmit={handleSubmit(submitForm)}>

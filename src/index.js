@@ -8,7 +8,7 @@ import 'select2/dist/js/select2.min';
 import 'font-awesome/css/font-awesome.min.css';
 import './styles/index.css';
 import './plugins/app';
-import App from './App';
+import App from './ui/App';
 import { checkAndSetTokenHeader } from './utils/tokenHelper';
 
 

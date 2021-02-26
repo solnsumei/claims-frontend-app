@@ -1,5 +1,5 @@
 import { Route, Redirect } from 'react-router-dom';
-import { useAuth } from '../providers/auth';
+import { useAuth } from '../../providers/auth';
 
 
 const GuestRoute = ({ children, ...rest }) => {
