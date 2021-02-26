@@ -1,6 +1,7 @@
-import { createContext, useState, useContext } from 'react';
-import jwtDecode from 'jwt-decode';
+import { createContext, useContext } from 'react';
+import { useQueryClient } from 'react-query';
 import client from '../services/axiosClient';
+import { removeToken, setToken, verifyToken } from '../utils/tokenHelper'
 import types from '../utils/types';
 
 const AuthContext = createContext();
@@ -9,49 +10,25 @@ export const useAuth = () => {
   return useContext(AuthContext);
 }
 
-const removeToken = () => {
-  if (localStorage.getItem(types.TOKEN)) {
-    localStorage.removeItem(types.TOKEN);
-
-    delete client.defaults.headers.common['Authorization'];
-  }
-}
-
-const setTokenHeader = token => {
-  client.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-} 
-
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
+  const queryClient = useQueryClient();
 
   const isAuthenticated = () => {
-    const token = localStorage.getItem(types.TOKEN);
+    const verified = verifyToken();
 
-    if (!token) {
-      return false;
+    if (!verified) {
+      queryClient.clear();
     }
 
-    try {
-      const decoded = jwtDecode(token);
-      if (decoded.exp * 1000 < (new Date().getTime())) {
-        logoutUser();
-      }
-
-      return decoded.sub;
-
-    } catch (error) {
-      return false;
-    }
+    return verified;
   }
 
   const loginUser = async data => {
     try { 
       const response = await client.post('/auth/login', data);
-
-      const token = response.data.token;
-      localStorage.setItem(types.TOKEN, token);
-      setTokenHeader(token);
-      setUser(response.data.user);
+      
+      setToken(response.data.token);
+      queryClient.setQueryData(types.USER, response.data);
     } catch(error) {
       throw (error);
     }
@@ -59,24 +36,11 @@ export const AuthProvider = ({ children }) => {
 
   const logoutUser = () => {
     removeToken();
-    setUser(null);
-  }
-
-  const getLoggedInUser = async () => {
-    try { 
-      const response = await client.get('/auth/user');
-      setUser(response.data.user);
-      return response.data.user;
-    } catch(error) {
-      if (error.response.status === 401) {
-        logoutUser();
-      }
-      throw error;
-    }
+    queryClient.clear();
   }
 
   return (
-    <AuthContext.Provider value={{ user, isAuthenticated, loginUser, logoutUser, getLoggedInUser }}>
+    <AuthContext.Provider value={{ isAuthenticated, loginUser, logoutUser }}>
       {children}
     </AuthContext.Provider>
   );

@@ -5,6 +5,7 @@ import GuestRoute from './middlewares/GuestRoute';
 import Home from './ui/pages/Home';
 import Login from './ui/pages/Login';
 import Profile from './ui/pages/Profile';
+import DepartmentPage from './ui/pages/departments/DepartmentPage';
 
 const Routes = () => {
   return (
@@ -19,6 +20,9 @@ const Routes = () => {
           </AuthenticatedRoute>
           <AuthenticatedRoute path="/profile">
             <Profile />
+          </AuthenticatedRoute>
+          <AuthenticatedRoute path="/departments">
+            <DepartmentPage />
           </AuthenticatedRoute>
         </AppLayout>
       </Switch>

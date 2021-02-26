@@ -9,6 +9,10 @@ import 'font-awesome/css/font-awesome.min.css';
 import './styles/index.css';
 import './plugins/app';
 import App from './App';
+import { checkAndSetTokenHeader } from './utils/tokenHelper';
+
+
+checkAndSetTokenHeader();
 
 ReactDOM.render(
   <React.StrictMode>

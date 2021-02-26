@@ -1,6 +1,12 @@
+import PageHeader from '../components/PageHeader';
+
+
 const Profile = () => {
   return (
-    <div>Profile</div>
+    <div>
+      <PageHeader title="Profile" />
+      <p>Profile</p>
+    </div>
   );
 }
  

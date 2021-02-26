@@ -3,13 +3,15 @@ import { useAuth } from '../../providers/auth';
 
 
 const Header = () => {
-	const { logoutUser } = useAuth();
+	const { logoutUser, isAuthenticated } = useAuth();
+
+	const { username } = isAuthenticated();
 
   return (
     <div className="header">
 				<div className="header-left">
 					<Link to="/" className="logo">
-						<img src="logo.png" alt="CLA" className="logo-img"/>
+						<img src="/logo.png" alt="CLA" className="logo-img"/>
 					</Link>
 				</div>
 				<span id="toggle_btn">
@@ -141,7 +143,7 @@ const Header = () => {
 						<Link to="#" className="dropdown-toggle nav-link" data-toggle="dropdown">
 							<span className="user-img"><img src="assets/img/profiles/avatar-21.jpg" alt="" />
 								<span className="status online"></span></span>
-							<span>Admin</span>
+							<span>{username}</span>
 						</Link>
 						<div className="dropdown-menu">
 							<Link className="dropdown-item" to="/profile">My Profile</Link>
