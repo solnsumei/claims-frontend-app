@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 
 const SelectInput = ({
   form: Form, name, itemsList, value, valueKey, valueName,
-  label, register, error, required = false, isDisabled = false
+  label, register, error, defaultOption = true, required = false, isDisabled = false
 }) => {
   return (
     <Form.Group controlId={name}>
@@ -16,7 +16,7 @@ const SelectInput = ({
         defaultValue={value}
         disabled={isDisabled}
         custom>
-        <option value="">Select {label}</option>
+        { defaultOption && <option value="">Select {label}</option>}
         {
           valueKey
             ? itemsList && itemsList.map(item => <option key={item[valueKey]} value={item[valueKey]}>
@@ -43,6 +43,7 @@ SelectInput.propTypes = {
   error: PropTypes.object,
   required: PropTypes.bool,
   isDisabled: PropTypes.bool,
+  defaultOption: PropTypes.bool,
 }
 
 export default SelectInput;

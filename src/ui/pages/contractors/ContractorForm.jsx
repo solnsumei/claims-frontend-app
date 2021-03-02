@@ -3,22 +3,18 @@ import { useForm } from 'react-hook-form';
 import { useQueryClient, useMutation } from 'react-query';
 import { Modal, Button, Form, InputGroup } from 'react-bootstrap';
 import types from '../../../utils/types';
-import { createEmployeeResolver, updateEmployeeResolver } from '../../../utils/validators';
-import { useFetchQuery } from '../../../hooks/useApi';
+import { createContractorResolver, updateContractorResolver } from '../../../utils/validators';
 import { saveData } from '../../../services/apiService';
 import InputField from '../../components/InputField';
 import SelectInput from '../../components/SelectInput';
 
 
-const EmployeeForm = ({ user, isOpen, closeModal }) => {
+const ContractorForm = ({ user, isOpen, closeModal }) => {
   const queryClient = useQueryClient();
   const [resetPassword, setResetPassword] = useState(false);
 
-  const { data: departments } = useFetchQuery({ key: types.DEPARTMENTS, url: '/departments/' });
-  const { data: roles } = useFetchQuery({ key: types.ROLES, url: '/auth/roles' });
-
   const { register, handleSubmit, errors, setError, reset } = useForm({
-    resolver: user?.name ? updateEmployeeResolver() : createEmployeeResolver(),
+    resolver: user?.name ? updateContractorResolver() : createContractorResolver(),
   });
 
   const mutation = useMutation(data => saveData({ id: user?.id, url: '/users', data }));
@@ -27,12 +23,12 @@ const EmployeeForm = ({ user, isOpen, closeModal }) => {
     mutation.mutate(data, {
       onSuccess: (newUser) => {
         if (user?.id) {
-          queryClient.invalidateQueries(types.EMPLOYEES);
+          queryClient.invalidateQueries(types.CONTRACTORS);
         } else {
-          queryClient.setQueryData(types.EMPLOYEES, old => [...old, newUser]);
+          queryClient.setQueryData(types.CONTRACTORS, old => [...old, newUser]);
         }
         reset();
-        closeModal('Employee was saved successfully');
+        closeModal('Contractor was saved successfully');
       },
       onError: (error) => {
         console.log('>>>>>>', error.response?.data);
@@ -65,39 +61,22 @@ const EmployeeForm = ({ user, isOpen, closeModal }) => {
         centered
       >
         <Modal.Header closeButton>
-          <Modal.Title>{user?.id ? 'Edit' : 'Add'} Employee</Modal.Title>
+          <Modal.Title>{user?.id ? 'Edit' : 'Add'} Contractor</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <Form onSubmit={handleSubmit(submitForm)}>
+            <InputField
+              form={Form}
+              type="text"
+              name="name"
+              label="Name"
+              register={register}
+              required={true}
+              value={user?.name}
+              error={errors.name}
+            />
             <div className="row">
               <div className="col-sm-7">
-                <InputField
-                  form={Form}
-                  type="text"
-                  name="name"
-                  label="Name"
-                  register={register}
-                  required={true}
-                  value={user?.name}
-                  error={errors.name}
-                />
-              </div>
-              <div className="col-sm-5">
-                <SelectInput
-                  form={Form}
-                  type="text"
-                  name="role"
-                  label="Role"
-                  required={true}
-                  itemsList={roles}
-                  register={register}
-                  value={user?.role}
-                  error={errors.role}
-                />
-              </div>
-            </div>
-            <div className="row">
-              <div className="col-sm-6">
                 <InputField
                   form={Form}
                   type="text"
@@ -110,6 +89,22 @@ const EmployeeForm = ({ user, isOpen, closeModal }) => {
                   error={errors.username}
                 />
               </div>
+              <div className="col-sm-5">
+                <SelectInput
+                  form={Form}
+                  type="text"
+                  name="role"
+                  label="Role"
+                  required={true}
+                  itemsList={["Contractor"]}
+                  register={register}
+                  value={user?.role}
+                  error={errors.role}
+                  defaultOption={false}
+                />
+              </div>
+            </div>
+            <div className="row">
               <div className="col-sm-6">
                 <InputField
                   form={Form}
@@ -122,8 +117,6 @@ const EmployeeForm = ({ user, isOpen, closeModal }) => {
                   error={errors.email}
                 />
               </div>
-            </div>
-            <div className="row">
               <div className="col-sm-6">
                 {!user?.id
                   ? <InputField
@@ -137,38 +130,25 @@ const EmployeeForm = ({ user, isOpen, closeModal }) => {
                     error={errors.password}
                   />
                   : <>
-                  <Form.Label>Password</Form.Label>
-                  <InputGroup>
-                  <Form.Control type="text" name="password" ref={register} disabled={!resetPassword} />
-                    <InputGroup.Append>
-                      <Button
-                        variant="outline-secondary"
-                        onClick={() => setResetPassword(!resetPassword)}>
-                          { !resetPassword ? 'Reset' : 'Cancel'}
-                      </Button>
-                    </InputGroup.Append>
-                  </InputGroup>
-                  {errors.password && <p className="text-danger">{errors.password.message}</p>}
+                    <Form.Label>Password</Form.Label>
+                    <InputGroup>
+                      <Form.Control type="text" name="password" ref={register} disabled={!resetPassword} />
+                      <InputGroup.Append>
+                        <Button
+                          variant="outline-secondary"
+                          onClick={() => setResetPassword(!resetPassword)}>
+                          {!resetPassword ? 'Reset' : 'Cancel'}
+                        </Button>
+                      </InputGroup.Append>
+                    </InputGroup>
+                    {errors.password && <p className="text-danger">{errors.password.message}</p>}
                   </>
                 }
               </div>
-              <div className="col-sm-6">
-                <SelectInput
-                  form={Form}
-                  type="text"
-                  name="department_id"
-                  label="Department"
-                  itemsList={departments}
-                  register={register}
-                  valueKey="id"
-                  valueName="name"
-                  value={user?.department?.id || user?.department_id}
-                  error={errors.department_id}
-                />
-              </div>
             </div>
+
             <div className="submit-section">
-              <Button className="submit-btn" type="submit">Save Employee</Button>
+              <Button className="submit-btn" type="submit">Save Contractor</Button>
             </div>
           </Form>
         </Modal.Body>
@@ -177,4 +157,4 @@ const EmployeeForm = ({ user, isOpen, closeModal }) => {
   );
 }
 
-export default EmployeeForm;
+export default ContractorForm;

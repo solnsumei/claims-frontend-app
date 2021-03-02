@@ -26,12 +26,11 @@ const ProjectForm = ({ project, isOpen, closeModal }) => {
       onSuccess: () => {
         queryClient.invalidateQueries(types.PROJECTS);
         reset();
-        closeModal();
+        closeModal('Project saved successfully');
       },
       onError: (error) => {
-        console.log('>>>>>>', error.response?.data);
-        setError("name",
-          { type: 'manual', message: 'Duplicate entry for name' },
+        setError("code",
+          { type: 'manual', message: 'Project with the code already exists' },
         );
       }
     });

@@ -1,17 +1,16 @@
 import { useState } from 'react';
 import { useParams, Redirect, Link } from 'react-router-dom';
-import { ToastContainer, toast } from 'react-toastify';
 import PageHeader from '../../components/PageHeader';
 import { useFetchQuery } from '../../../hooks/useApi';
 import types from '../../../utils/types';
 import { toDateString } from '../../../utils/dateHelpers';
-import ProjectForm from './ProjectForm';
+import ContractorForm from './ContractorForm';
 
 
-const ProjectDetails = () => {
+const ContractorDetails = () => {
   const { id } = useParams();
 
-  const { data: project, isLoading, isError } = useFetchQuery({ key: [types.PROJECTS, id], url: `/projects/${id}` })
+  const { data: contractor, isLoading, isError } = useFetchQuery({ key: [types.EMPLOYEES, id], url: `/users/${id}` })
   const [showFormModal, setFormModalVisibility] = useState(false);
   const [selectedItem, setItem] = useState(null);
 
@@ -21,40 +20,33 @@ const ProjectDetails = () => {
     setFormModalVisibility(true);
   };
 
-  const closeForm = (message=null) => {
+  const closeForm = () => {
     if (selectedItem) {
       setItem(null);
     }
-
-    if (message) {
-      toast.success(message);
-    }
-    
     setFormModalVisibility(false);
   };
 
   return (
     <>
       <PageHeader
-        title={project?.name || 'Project Details'}
-        subtitle="Projects"
-        buttonTitle="Edit Project"
+        title={contractor?.name || 'Contractor Details'}
+        subtitle="Contractors"
+        buttonTitle="Edit Contractor"
         onClick={showForm}
       />
 
       {isLoading && <p>Loading...</p>}
-      {isError && <Redirect to="/projects" />}
+      {isError && <Redirect to="/contractors" />}
 
-      <ToastContainer />
-      
-      {project && <div className="row">
+      {contractor && <div className="row">
         <div className="col-lg-8">
           <div className="card">
             <div className="card-body">
-              <div className="project-title">
-                <h5 className="card-title">{project.name}</h5>
+              <div className="contractor-title">
+                <h5 className="card-title">{contractor.name}</h5>
               </div>
-              <p>{project.description}</p>
+              <p>{contractor.description}</p>
             </div>
           </div>
           <div className="card">
@@ -90,50 +82,50 @@ const ProjectDetails = () => {
         <div className="col-lg-4">
           <div className="card">
             <div className="card-body">
-              <h6 className="card-title m-b-15">Project details</h6>
+              <h6 className="card-title m-b-15">Contractor details</h6>
               <table className="table table-striped table-border">
                 <tbody>
                   <tr>
-                    <td>Project Code:</td>
-                    <td className="text-right">{project.code}</td>
+                    <td>Contractor Code:</td>
+                    <td className="text-right">{contractor.code}</td>
                   </tr>
                   <tr>
                     <td>Budget:</td>
-                    <td className="text-right">N{project.budget}</td>
+                    <td className="text-right">N{contractor.budget}</td>
                   </tr>
-                  {project?.department && <tr>
+                  {contractor?.department && <tr>
                     <td>Department:</td>
-                    <td className="text-right">{project.department.name}</td>
+                    <td className="text-right">{contractor.department.name}</td>
                     </tr>
                   }
                   <tr>
                     <td>Created:</td>
-                    <td className="text-right">{toDateString(project.created_at)}</td>
+                    <td className="text-right">{toDateString(contractor.created_at)}</td>
                   </tr>
                   <tr>
                     <td>Duration:</td>
-                    <td className="text-right">{project.duration} Month(s)</td>
+                    <td className="text-right">{contractor.duration} Month(s)</td>
                   </tr>
                   <tr>
                     <td>Status:</td>
-                    <td className="text-right">{project.status}</td>
+                    <td className="text-right">{contractor.status}</td>
                   </tr>
                 </tbody>
               </table>
             </div>
           </div>
-          <div className="card project-user">
+          <div className="card contractor-contractor">
             <div className="card-body">
-              <h6 className="card-title m-b-20">Project manager</h6>
+              <h6 className="card-title m-b-20">Contractor manager</h6>
               <ul className="list-box">
                 <li>
-                  <Link to={`/employees/${project.manager.id}`}>
+                  <Link to={`/contractors/${contractor.manager.id}`}>
                     <div className="list-item">
                       <div className="list-left">
-                        <span className="avatar"><i className="fa fa-user"></i></span>
+                        <span className="avatar"><i className="fa fa-contractor"></i></span>
                       </div>
                       <div className="list-body">
-                        <span className="message-author">{project.manager?.name}</span>
+                        <span className="message-author">{contractor.manager?.name}</span>
                         <div className="clearfix"></div>
                       </div>
                     </div>
@@ -145,13 +137,13 @@ const ProjectDetails = () => {
         </div>
       </div>}
 
-      <ProjectForm
+      <ContractorForm
         isOpen={showFormModal}
         closeModal={closeForm}
-        project={project}
+        contractor={contractor}
       />
     </>
   );
 }
 
-export default ProjectDetails;
+export default ContractorDetails;

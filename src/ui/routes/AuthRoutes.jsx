@@ -8,6 +8,8 @@ import ProjectPage from '../pages/projects/ProjectPage';
 import ProjectDetails from '../pages/projects/ProjectDetails';
 import EmployeePage from '../pages/employees/EmployeePage';
 import EmployeeDetails from '../pages/employees/EmployeeDetails';
+import ContractorPage from '../pages/contractors/ContractorPage';
+import ContractorDetails from '../pages/contractors/ContractorDetails';
 import NotFound from '../pages/NotFound';
 
 
@@ -24,17 +26,23 @@ const AuthRoutes = () => {
           <AuthenticatedRoute exact path="/departments" middleware="admins">
             <DepartmentPage />
           </AuthenticatedRoute>
-          <AuthenticatedRoute exact path="/projects/:id" middleware="admins">
+          <AuthenticatedRoute path="/projects/:id" middleware="admins">
             <ProjectDetails />
           </AuthenticatedRoute>
           <AuthenticatedRoute exact path="/projects" middleware="admins">
             <ProjectPage />
           </AuthenticatedRoute>
-          <AuthenticatedRoute exact path="/employees/:id" middleware="admins">
+          <AuthenticatedRoute path="/employees/:id" middleware="admins">
             <EmployeeDetails />
           </AuthenticatedRoute>
           <AuthenticatedRoute exact path="/employees" middleware="admins">
             <EmployeePage />
+          </AuthenticatedRoute>
+          <AuthenticatedRoute path="/contractors/:id" middleware="admins">
+            <ContractorDetails />
+          </AuthenticatedRoute>
+          <AuthenticatedRoute exact path="/contractors" middleware="admins">
+            <ContractorPage />
           </AuthenticatedRoute>
           <Route path="*">
             <NotFound />
