@@ -2,23 +2,23 @@ import { useState } from 'react';
 import { useMutation, useQueryClient } from 'react-query';
 import { ToastContainer, toast } from 'react-toastify';
 import PageHeader from '../../components/PageHeader';
-import ProjectList from './ProjectList';
+import EmployeeList from './EmployeeList';
 import { useFetchQuery } from '../../../hooks/useApi';
 import types from '../../../utils/types';
-import ProjectForm from './ProjectForm';
+import EmployeeForm from './EmployeeForm';
 import DeleteModal from '../../components/DeleteModal';
 import { deleteItem } from '../../../services/apiService';
 
 
-const ProjectPage = () => {
+const EmployeePage = () => {
   const queryClient = useQueryClient();
 
-  const { data, isLoading } = useFetchQuery({ key: types.PROJECTS, url: '/projects/' })
+  const { data, isLoading } = useFetchQuery({ key: types.EMPLOYEES, url: '/users/' })
   const [showFormModal, setFormModalVisibility] = useState(false);
   const [showDeleteModal, setDeleteModalVisibility] = useState(false);
   const [selectedItem, setItem] = useState(null);
 
-  const mutation = useMutation((id) => deleteItem(`/projects/${id}`));
+  const mutation = useMutation((id) => deleteItem(`/users/${id}`));
 
   const showForm = (item) => {
     setItem(item);
@@ -26,12 +26,11 @@ const ProjectPage = () => {
   };
 
   const closeForm = (message=null) => {
-    if (selectedItem) {
-      setItem(null);
-    }
-
     if (message) {
       toast.success(message);
+    }
+    if (selectedItem) {
+      setItem(null);
     }
     setFormModalVisibility(false);
   };
@@ -56,12 +55,12 @@ const ProjectPage = () => {
 
     mutation.mutate(selectedItem.id, {
       onSuccess: () => {
-        queryClient.invalidateQueries(types.PROJECTS);
-        toast.success('Project was deleted successfully');
+        queryClient.invalidateQueries(types.EMPLOYEES);
+        toast.success("Employee was deleted successfully");
       },
       onError: (error) => {
         if (error?.response) {
-          toast.error(error.response.data.details);
+          toast.error(error.response.data.detail);
         }
       }
     });
@@ -72,31 +71,32 @@ const ProjectPage = () => {
   return (
     <>
       <PageHeader
-        title="Projects"
-        buttonTitle="Add Project"
+        title="Employees"
+        buttonTitle="Add Employee"
         onClick={showForm}
       />
 
       {isLoading && <p>Loading...</p>}
+
       <ToastContainer />
 
-      <ProjectList
-        projectList={data}
+      <EmployeeList
+        employeeList={data}
         editItem={showForm}
         deleteItem={showDeleteForm} />
       
-      <ProjectForm
+      <EmployeeForm
         isOpen={showFormModal}
         closeModal={closeForm}
-        project={selectedItem}
+        user={selectedItem}
       />
       
       {showDeleteModal && <DeleteModal 
-        title="project"
+        title="Employee"
         onDelete={handleDelete}
         closeModal={closeDeleteModal} />}
     </>
   );
 }
 
-export default ProjectPage;
+export default EmployeePage;

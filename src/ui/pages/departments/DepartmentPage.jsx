@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useMutation, useQueryClient } from 'react-query';
+import { ToastContainer, toast } from 'react-toastify';
 import PageHeader from '../../components/PageHeader';
 import DepartmentList from './DepartmentList';
 import { useFetchQuery } from '../../../hooks/useApi';
@@ -12,7 +13,7 @@ import { deleteItem } from '../../../services/apiService';
 const DepartmentPage = () => {
   const queryClient = useQueryClient();
 
-  const { data, isLoading } = useFetchQuery({ key: types.DEPARTMENTS, url: '/departments' })
+  const { data, isLoading } = useFetchQuery({ key: types.DEPARTMENTS, url: '/departments/' })
   const [showFormModal, setFormModalVisibility] = useState(false);
   const [showDeleteModal, setDeleteModalVisibility] = useState(false);
   const [selectedDepartment, setDepartment] = useState(null);
@@ -24,9 +25,12 @@ const DepartmentPage = () => {
     setFormModalVisibility(true);
   };
 
-  const closeForm = () => {
+  const closeForm = (message=null) => {
     if (selectedDepartment) {
       setDepartment(null);
+    }
+    if (message) {
+      toast.success(message);
     }
     setFormModalVisibility(false);
   };
@@ -52,12 +56,16 @@ const DepartmentPage = () => {
     mutation.mutate(selectedDepartment.id, {
       onSuccess: () => {
         queryClient.invalidateQueries(types.DEPARTMENTS);
-        closeDeleteModal();
+        toast.success('Department deleted successfully');
       },
       onError: (error) => {
-        console.log(error);
+        if (error?.response) {
+          toast.error(error.response.data.detail);
+        }
       }
     });
+
+    closeDeleteModal();
   }
 
   return (
@@ -69,6 +77,7 @@ const DepartmentPage = () => {
       />
 
       {isLoading && <p>Loading...</p>}
+      <ToastContainer />
 
       <DepartmentList
         departmentList={data}
@@ -79,6 +88,7 @@ const DepartmentPage = () => {
         isOpen={showFormModal}
         closeModal={closeForm}
         department={selectedDepartment}
+        queryClient={queryClient}
       />
       {showDeleteModal && <DeleteModal 
         title="department"

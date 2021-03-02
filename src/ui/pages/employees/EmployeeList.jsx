@@ -1,7 +1,7 @@
-import ProjectItem from './ProjectItem';
+import EmployeeItem from './EmployeeItem';
 
 
-const ProjectList = ({ projectList, editItem, deleteItem }) => {
+const EmployeeList = ({ employeeList, editItem, deleteItem }) => {
   return (
     <>
       <div className="row">
@@ -11,24 +11,25 @@ const ProjectList = ({ projectList, editItem, deleteItem }) => {
               <thead>
                 <tr>
                   <th style={{ width: '30px' }}>#</th>
-                  <th>Project</th>
-                  <th>Code</th>
-                  <th>Budget</th>
-                  <th>Duration (Months)</th>
+                  <th>Name</th>
+                  <th>Username</th>
+                  <th>Email</th>
+                  <th>Role</th>
+                  <th>Department</th>
                   <th>Status</th>
                   <th className="text-right">Action</th>
                 </tr>
               </thead>
               <tbody>
-                {projectList && projectList.length > 0
-                  ? projectList.map((item, i) => 
-                    <ProjectItem
+                {employeeList && employeeList.length > 0
+                  ? employeeList.map((item, i) => 
+                    <EmployeeItem
                       key={item.id}
-                      project={item} index={i}
+                      employee={item} index={i}
                       onEdit={editItem}
                       onDelete={deleteItem}
                     />)
-                  : <tr><td colSpan='7'>No item to display.</td></tr>
+                  : <tr><td colSpan='8'>No item to display.</td></tr>
                 }
               </tbody>
             </table>
@@ -39,4 +40,4 @@ const ProjectList = ({ projectList, editItem, deleteItem }) => {
   );
 }
 
-export default ProjectList;
+export default EmployeeList;

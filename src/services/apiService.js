@@ -30,7 +30,7 @@ export const saveData = async ({ url, data, id }) => {
     if (id) {
       response = await client.put(apiUrl, data);
     } else {
-      response = await client.post(apiUrl, data);
+      response = await client.post(`${apiUrl}/`, data);
     }
     return response.data;
   } catch(error) {

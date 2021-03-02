@@ -2,36 +2,40 @@ import { useForm } from 'react-hook-form';
 import { useQueryClient, useMutation } from 'react-query';
 import { Modal, Button, Form } from 'react-bootstrap';
 import types from '../../../utils/types';
-import { projectResolver } from '../../../utils/validators';
+import { createEmployeeResolver, updateEmployeeResolver } from '../../../utils/validators';
 import { useFetchQuery } from '../../../hooks/useApi';
 import { saveData } from '../../../services/apiService';
 import InputField from '../../components/InputField';
 import SelectInput from '../../components/SelectInput';
 
 
-const ProjectForm = ({ project, isOpen, closeModal }) => {
+const EmployeeForm = ({ user, isOpen, closeModal }) => {
   const queryClient = useQueryClient();
 
   const { data: departments } = useFetchQuery({ key: types.DEPARTMENTS, url: '/departments/' });
-  const { data: users } = useFetchQuery({ key: types.EMPLOYEES, url: '/users/' });
+  const { data: roles } = useFetchQuery({ key: types.ROLES, url: '/auth/roles' });
 
   const { register, handleSubmit, errors, setError, reset } = useForm({
-    resolver: projectResolver(),
+    resolver: user?.name ? updateEmployeeResolver() : createEmployeeResolver(),
   });
 
-  const mutation = useMutation((data) => saveData({ id: project?.id, url: '/projects', data }));
+  const mutation = useMutation(data => saveData({ id: user?.id, url: '/users', data }));
 
   const submitForm = async (data) => {
     mutation.mutate(data, {
-      onSuccess: () => {
-        queryClient.invalidateQueries(types.PROJECTS);
+      onSuccess: (newUser) => {
+        if (user?.id) {
+          queryClient.invalidateQueries(types.EMPLOYEES);
+        } else {
+          queryClient.setQueryData(types.EMPLOYEES, old => [...old, newUser]);
+        }
         reset();
-        closeModal();
+        closeModal('Employee was saved successfully');
       },
       onError: (error) => {
         console.log('>>>>>>', error.response?.data);
-        setError("name",
-          { type: 'manual', message: 'Duplicate entry for name' },
+        setError("username",
+          { type: 'manual', message: 'Duplicate entry for username' },
         );
       }
     });
@@ -51,12 +55,12 @@ const ProjectForm = ({ project, isOpen, closeModal }) => {
         centered
       >
         <Modal.Header closeButton>
-          <Modal.Title>{project?.id ? 'Edit' : 'Add'} Project</Modal.Title>
+          <Modal.Title>{user?.id ? 'Edit' : 'Add'} Employee</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <Form onSubmit={handleSubmit(submitForm)}>
             <div className="row">
-              <div className="col-sm-8">
+              <div className="col-sm-7">
                 <InputField
                   form={Form}
                   type="text"
@@ -64,38 +68,62 @@ const ProjectForm = ({ project, isOpen, closeModal }) => {
                   label="Name"
                   register={register}
                   required={true}
-                  value={project?.name}
+                  value={user?.name}
                   error={errors.name}
                 />
               </div>
-              <div className="col-sm-4">
-                <InputField
+              <div className="col-sm-5">
+                <SelectInput
                   form={Form}
                   type="text"
-                  name="code"
-                  label="Code"
-                  register={register}
+                  name="role"
+                  label="Role"
                   required={true}
-                  isDisabled={!!(project && project?.code)}
-                  value={project?.code}
-                  error={errors.code}
+                  itemsList={roles}
+                  register={register}
+                  value={user?.role}
+                  error={errors.role}
                 />
               </div>
             </div>
             <div className="row">
               <div className="col-sm-6">
-                <SelectInput
+                <InputField
                   form={Form}
                   type="text"
-                  name="manager_id"
-                  label="Manager"
-                  itemsList={users}
+                  name="username"
+                  label="Username"
                   register={register}
                   required={true}
-                  valueKey="id"
-                  valueName="name"
-                  value={project?.manager?.id || project?.manager_id}
-                  error={errors.manager_id}
+                  isDisabled={!!(user && user?.username)}
+                  value={user?.username}
+                  error={errors.username}
+                />
+              </div>
+              <div className="col-sm-6">
+                <InputField
+                  form={Form}
+                  type="email"
+                  name="email"
+                  label="Email"
+                  register={register}
+                  required={true}
+                  value={user?.email}
+                  error={errors.email}
+                />
+              </div>
+            </div>
+            <div className="row">
+              <div className="col-sm-6">
+                <InputField
+                  form={Form}
+                  type="text"
+                  name="password"
+                  label="Password"
+                  register={register}
+                  required={true}
+                  value={user?.password}
+                  error={errors.password}
                 />
               </div>
               <div className="col-sm-6">
@@ -108,49 +136,13 @@ const ProjectForm = ({ project, isOpen, closeModal }) => {
                   register={register}
                   valueKey="id"
                   valueName="name"
-                  value={project?.department?.id || project?.department_id}
+                  value={user?.department?.id || user?.department_id}
                   error={errors.department_id}
                 />
               </div>
             </div>
-            <InputField
-              form={Form}
-              type="textarea"
-              name="description"
-              label="Description"
-              register={register}
-              required={true}
-              value={project?.description}
-              error={errors.description}
-            />
-            <div className="row">
-              <div className="col-sm-6">
-                <InputField
-                  form={Form}
-                  type="number"
-                  name="budget"
-                  label="Budget"
-                  register={register}
-                  required={true}
-                  value={project?.budget}
-                  error={errors.budget}
-                />
-              </div>
-              <div className="col-sm-6">
-                <InputField
-                  form={Form}
-                  type="number"
-                  name="duration"
-                  label="Duration (Months)"
-                  register={register}
-                  required={true}
-                  value={project?.duration}
-                  error={errors.duration}
-                />
-              </div>
-            </div>
             <div className="submit-section">
-              <Button className="submit-btn" type="submit">Save Project</Button>
+              <Button className="submit-btn" type="submit">Save Employee</Button>
             </div>
           </Form>
         </Modal.Body>
@@ -159,4 +151,4 @@ const ProjectForm = ({ project, isOpen, closeModal }) => {
   );
 }
 
-export default ProjectForm;
+export default EmployeeForm;

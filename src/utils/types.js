@@ -7,7 +7,7 @@ const types = {
   EMPLOYEES: 'employees',
   CONTRACTORS: 'contractors',
   CLAIMS: 'claims',
-  USERS: 'users',
+  ROLES: 'roles',
 };
 
 export default types;

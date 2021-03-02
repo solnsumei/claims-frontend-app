@@ -1,4 +1,4 @@
-import { useQuery, useMutation } from 'react-query';
+import { useQuery } from 'react-query';
 import { useAuth } from '../providers/auth';
 import { fetchData } from '../services/apiService';
 

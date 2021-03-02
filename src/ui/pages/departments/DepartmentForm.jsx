@@ -1,17 +1,16 @@
 import { useForm } from 'react-hook-form';
-import { useQueryClient, useMutation } from 'react-query';
+import { useMutation } from 'react-query';
 import { Modal, Button, Form } from 'react-bootstrap';
 import types from '../../../utils/types';
 import { departmentResolver } from '../../../utils/validators';
 import { saveData } from '../../../services/apiService';
 
 
-const DepartmentForm = ({ department, isOpen, closeModal }) => {
+const DepartmentForm = ({ department, isOpen, closeModal, queryClient }) => {
+
   const { register, handleSubmit, errors, setError, reset } = useForm({
     resolver: departmentResolver(),
   });
-
-  const queryClient = useQueryClient();
 
   const mutation = useMutation((data) => saveData({ id: department?.id, url: '/departments', data }));
 
@@ -19,8 +18,8 @@ const DepartmentForm = ({ department, isOpen, closeModal }) => {
     mutation.mutate(data, {
       onSuccess: () => {
         queryClient.invalidateQueries(types.DEPARTMENTS);
-        closeModal();
         reset();
+        closeModal("Department saved successfully");
       },
       onError: (error) => {
         setError("name",
