@@ -4,6 +4,11 @@ import { yupResolver } from '@hookform/resolvers/yup';
 
 const name = yup.string().required().min(3).max(30);
 const description = yup.string().required();
+const role = yup.string().required("role is a required field").oneOf(['Admin', 'Manager', 'Staff', 'Contractor']);
+const username = yup.string().required().min(3).max(30);
+const email = yup.string().required().email().max(50);
+const password = yup.string().required().min(8).max(70);
+
 const departmentField = yup.string()
 .transform(value => {
   if (value !== "") {
@@ -14,6 +19,14 @@ const departmentField = yup.string()
   return null;
 }).nullable().uuid("field is invalid");
 
+const passwordUpdate = yup.string()
+.transform(value => {
+  if (value !== "") {
+    return value;
+  }
+  // Transform the value to undefined
+  return undefined;
+}).nullable().notRequired().min(8).max(70);
 
 export const departmentResolver = () => yupResolver(yup.object().shape({ name }));
 
@@ -39,10 +52,10 @@ export const projectResolver = () => yupResolver(
 export const createEmployeeResolver = () => yupResolver(
   yup.object().shape({
     name,
-    role: yup.string().required("role is a required field").oneOf(['Admin', 'Manager', 'Staff']),
-    username: yup.string().required().min(3).max(30),
-    email: yup.string().required().email().max(50),
-    password: yup.string().required().min(8).max(70),
+    role,
+    username,
+    email,
+    password,
     department_id: departmentField,
   })
 );
@@ -51,16 +64,9 @@ export const createEmployeeResolver = () => yupResolver(
 export const updateEmployeeResolver = () => yupResolver(
   yup.object().shape({
     name,
-    role: yup.string().required().oneOf(['Admin', 'Manager', 'Staff']),
-    email: yup.string().required().email().max(50),
-    password: yup.string()
-    .transform(value => {
-      if (value !== "") {
-        return value;
-      }
-      // Transform the value to undefined
-      return undefined;
-    }).nullable().notRequired().min(8).max(70),
+    role,
+    email,
+    password: passwordUpdate,
     department_id: departmentField,
   })
 );
@@ -68,26 +74,18 @@ export const updateEmployeeResolver = () => yupResolver(
 export const createContractorResolver = () => yupResolver(
   yup.object().shape({
     name,
-    role: yup.string().required().oneOf(['Contractor']),
-    username: yup.string().required().min(3).max(30),
-    email: yup.string().required().email().max(50),
-    password: yup.string().required().min(8).max(70),
+    role,
+    username,
+    email,
+    password,
   })
 );
-
 
 export const updateContractorResolver = () => yupResolver(
   yup.object().shape({
     name,
-    role: yup.string().required().oneOf(['Contractor']),
-    email: yup.string().required().email().max(50),
-    password: yup.string()
-    .transform(value => {
-      if (value !== "") {
-        return value;
-      }
-      // Transform the value to undefined
-      return undefined;
-    }).nullable().notRequired().min(8).max(70),
+    role,
+    email,
+    password: passwordUpdate,
   })
 );
