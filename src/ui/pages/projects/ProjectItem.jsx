@@ -8,7 +8,7 @@ const ProjectItem = ({ project, index, onEdit, onDelete }) => {
       <td><Link to={`/projects/${project.id}`}>{ project.name }</Link></td>
       <td>{ project.code }</td>
       <td>{ project.budget }</td>
-      <td>{ project.duration }</td>
+      <td>{ project.duration } month{Number(project.duration) > 1 ? 's': ''}</td>
       <td>{ project.status }</td>
       <td className="text-right">
         <div className="dropdown dropdown-action">

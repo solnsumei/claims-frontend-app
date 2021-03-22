@@ -35,7 +35,6 @@ const EmployeeForm = ({ user, isOpen, closeModal }) => {
         closeModal('Employee was saved successfully');
       },
       onError: (error) => {
-        console.log('>>>>>>', error.response?.data);
         setError("username",
           { type: 'manual', message: 'Duplicate entry for username' },
         );

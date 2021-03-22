@@ -4,16 +4,12 @@ import { fetchData } from '../services/apiService';
 
 
 export const useFetchQuery = ({ key, url }) => {
-  const { isAuthenticated, logoutUser } = useAuth();
+  const { isAuthenticated } = useAuth();
   const auth = isAuthenticated();
   
-  const result = useQuery(key, () => fetchData(url), {
-    enabled: !!(auth?.username)
+  return useQuery(key, () => fetchData(url), {
+    enabled: !!(auth?.username),
+    retry: 1,
+    retryDelay: 3000,
   });
-
-  if (result && result.error && result.error.response.status === 401) {
-    logoutUser();
-  }
-
-  return result;
 }

@@ -1,27 +1,60 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useMutation, useQueryClient } from 'react-query';
 import { useParams, Redirect, Link } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 import PageHeader from '../../components/PageHeader';
 import { useFetchQuery } from '../../../hooks/useApi';
+import { saveTeamMember } from '../../../services/apiService';
 import types from '../../../utils/types';
 import { toDateString } from '../../../utils/dateHelpers';
 import ProjectForm from './ProjectForm';
+import ProjectUsersForm from './ProjectUsersForm';
+import ProjectTeam from './ProjectTeam'
+import { getAvailableUsers } from '../../../utils/projectHelpers';
 
 
 const ProjectDetails = () => {
   const { id } = useParams();
-
-  const { data: project, isLoading, isError } = useFetchQuery({ key: [types.PROJECTS, id], url: `/projects/${id}` })
+  const queryClient = useQueryClient();
+  const [showMembersModal, setMembersModalVisibility] = useState(false);
+  const [availableUsers, setAvailableUsers] = useState([]);
   const [showFormModal, setFormModalVisibility] = useState(false);
   const [selectedItem, setItem] = useState(null);
 
+  const { data: project, isLoading, isError } = useFetchQuery({ key: [types.PROJECTS, id], url: `/projects/${id}` });
+  const { data: employees } = useFetchQuery({ key: types.EMPLOYEES, url: '/users/' });
+  const { data: contractors } = useFetchQuery({ key: types.CONTRACTORS, url: '/users/?contractors=true' });
+
+  useEffect(() => {
+    if (project && employees && contractors) {
+      setAvailableUsers(getAvailableUsers({ project, allUsers: employees.concat(contractors) }));
+    }
+  }, [project, employees, contractors]);
+
+  const mutation = useMutation((data) => saveTeamMember({ id: project?.id, data }));
+
+  const toggleMembersForm = () => {
+    setMembersModalVisibility(!showMembersModal);
+  }
+
+  const updateTeamMembers = async (members, action) => {
+    mutation.mutate({ user_ids: members, action }, {
+      onSuccess: () => {
+        queryClient.invalidateQueries([types.PROJECTS, project.id]);
+        setMembersModalVisibility(false);
+      },
+      onError: (error) => {
+        console.log('error >>>>>>', error);
+      }
+    });
+  }
 
   const showForm = (item) => {
     setItem(item);
     setFormModalVisibility(true);
   };
 
-  const closeForm = (message=null) => {
+  const closeForm = (message = null) => {
     if (selectedItem) {
       setItem(null);
     }
@@ -29,7 +62,7 @@ const ProjectDetails = () => {
     if (message) {
       toast.success(message);
     }
-    
+
     setFormModalVisibility(false);
   };
 
@@ -46,7 +79,7 @@ const ProjectDetails = () => {
       {isError && <Redirect to="/projects" />}
 
       <ToastContainer />
-      
+
       {project && <div className="row">
         <div className="col-lg-8">
           <div className="card">
@@ -58,33 +91,20 @@ const ProjectDetails = () => {
             </div>
           </div>
           <div className="card">
-            <div className="card-body">
-              <h5 className="card-title m-b-20">Contractors</h5>
-              <ul className="files-list">
-                <li>
-                  <div className="files-cont">
-                    <div className="file-type">
-                      <span className="files-icon"><i className="fa fa-file-pdf-o"></i></span>
-                    </div>
-                    <div className="files-info">
-                      <span className="file-name text-ellipsis"><Link to="#">AHA Selfcare Mobile Application Test-Cases.xls</Link></span>
-                      <span className="file-author"><Link to="#">Richard Miles</Link></span> <span className="file-date">May 31st at 6:53 PM</span>
-                      <div className="file-size">Size: 14.8Mb</div>
-                    </div>
-                    <ul className="files-action">
-                      <li className="dropdown dropdown-action">
-                        <Link to="#" className="dropdown-toggle btn btn-link" data-toggle="dropdown" aria-expanded="false"><i className="material-icons">more_horiz</i></Link>
-                        <div className="dropdown-menu dropdown-menu-right">
-                          <Link className="dropdown-item" to="#">Download</Link>
-                          <Link className="dropdown-item" to="#">Share</Link>
-                          <Link className="dropdown-item" to="#">Delete</Link>
-                        </div>
-                      </li>
-                    </ul>
-                  </div>
-                </li>
-              </ul>
+            <div className="card-header">
+              <h3 className="card-title mb-0">
+                Team
+                <button
+                  className="float-right btn btn-primary btn-sm"
+                  onClick={toggleMembersForm}>
+                  <i className="fa fa-plus"></i> Add
+              </button>
+              </h3>
             </div>
+            <ProjectTeam
+              teamMembers={project?.team}
+              onRemove={updateTeamMembers}
+            />
           </div>
         </div>
         <div className="col-lg-4">
@@ -104,7 +124,7 @@ const ProjectDetails = () => {
                   {project?.department && <tr>
                     <td>Department:</td>
                     <td className="text-right">{project.department.name}</td>
-                    </tr>
+                  </tr>
                   }
                   <tr>
                     <td>Created:</td>
@@ -145,11 +165,20 @@ const ProjectDetails = () => {
         </div>
       </div>}
 
-      <ProjectForm
+      {project?.name && <ProjectForm
         isOpen={showFormModal}
         closeModal={closeForm}
         project={project}
-      />
+      />}
+
+      {project?.name && <ProjectUsersForm
+        isOpen={showMembersModal}
+        closeModal={toggleMembersForm}
+        project={project}
+        availableUsers={availableUsers}
+        onSave={updateTeamMembers}
+        loading={mutation.isLoading}
+      />}
     </>
   );
 }

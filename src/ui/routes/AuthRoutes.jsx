@@ -1,4 +1,5 @@
 import { Switch, Route } from 'react-router-dom';
+import { isActiveUser, isAdmin } from '../../utils/projectHelpers';
 import AppLayout from '../layouts/AppLayout';
 import AuthenticatedRoute from '../middlewares/AuthenticatedRoute';
 import Home from '../pages/Home';
@@ -11,37 +12,41 @@ import EmployeeDetails from '../pages/employees/EmployeeDetails';
 import ContractorPage from '../pages/contractors/ContractorPage';
 import ContractorDetails from '../pages/contractors/ContractorDetails';
 import NotFound from '../pages/NotFound';
+import ChangePassword from '../pages/ChangePassword';
 
 
 const AuthRoutes = () => {
   return (
     <AppLayout>
         <Switch>
-          <AuthenticatedRoute exact path="/">
+          <AuthenticatedRoute exact path="/" middleware={isActiveUser}>
             <Home />
           </AuthenticatedRoute>
-          <AuthenticatedRoute exact path="/profile">
+          <AuthenticatedRoute exact path="/profile" middleware={isActiveUser}>
             <Profile />
           </AuthenticatedRoute>
-          <AuthenticatedRoute exact path="/departments" middleware="admins">
+          <AuthenticatedRoute exact path="/change-password">
+            <ChangePassword />
+          </AuthenticatedRoute>
+          <AuthenticatedRoute exact path="/departments" middleware={isAdmin}>
             <DepartmentPage />
           </AuthenticatedRoute>
-          <AuthenticatedRoute path="/projects/:id" middleware="admins">
+          <AuthenticatedRoute path="/projects/:id" middleware={isAdmin}>
             <ProjectDetails />
           </AuthenticatedRoute>
-          <AuthenticatedRoute exact path="/projects" middleware="admins">
+          <AuthenticatedRoute exact path="/projects" middleware={isAdmin}>
             <ProjectPage />
           </AuthenticatedRoute>
-          <AuthenticatedRoute path="/employees/:id" middleware="admins">
+          <AuthenticatedRoute path="/employees/:id" middleware={isAdmin}>
             <EmployeeDetails />
           </AuthenticatedRoute>
-          <AuthenticatedRoute exact path="/employees" middleware="admins">
+          <AuthenticatedRoute exact path="/employees" middleware={isAdmin}>
             <EmployeePage />
           </AuthenticatedRoute>
-          <AuthenticatedRoute path="/contractors/:id" middleware="admins">
+          <AuthenticatedRoute path="/contractors/:id" middleware={isAdmin}>
             <ContractorDetails />
           </AuthenticatedRoute>
-          <AuthenticatedRoute exact path="/contractors" middleware="admins">
+          <AuthenticatedRoute exact path="/contractors" middleware={isAdmin}>
             <ContractorPage />
           </AuthenticatedRoute>
           <Route path="*">

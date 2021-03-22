@@ -1,14 +1,14 @@
 import $ from 'jquery';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { useEffect } from 'react';
 import { useAuth } from '../../providers/auth';
 import AdminLinks from './AdminLinks';
-import StaffLinks from './StaffLinks';
 
 
 const Sidebar = () => {
 	const { isAuthenticated } = useAuth();
 	const { username, isAdmin } = isAuthenticated();
+	const { pathname } = useLocation();
 
 	useEffect(() => {
 		$('#sidebar-menu a').on('click', function (e) {
@@ -60,12 +60,32 @@ const Sidebar = () => {
 							<li className="menu-title">
 								<span>Main</span>
 							</li>
-							<li>
+							<li className={pathname === '/' ? 'active' : ''}>
 								<Link to="/"><i className="fa fa-dashboard"></i> <span> Dashboard</span> </Link>
 							</li>
-							{isAdmin
-								? <AdminLinks />
-								: <StaffLinks />}
+							<li className={pathname === '/profile' ? 'active' : ''}>
+								<Link to="/profile"><i className="fa fa-user"></i> <span> My Profile</span> </Link>
+							</li>
+							{isAdmin && <AdminLinks />}
+							<li className="menu-title">
+								<span>Accounts</span>
+							</li>
+							<li className="submenu">
+								<Link to="#"><i className="fa fa-files-o"></i> <span> Invoices </span> <span className="menu-arrow"></span></Link>
+								<ul style={{ display: 'none' }}>
+									<li><Link to="/invoices/pending">Pending</Link></li>
+									<li><Link to="/invoices/approved">Approved</Link></li>
+									<li><Link to="/invoices/paid">Paid</Link></li>
+									<li><Link to="/invoices/cancelled">Cancelled</Link></li>
+								</ul>
+							</li>
+							<li className="submenu">
+								<Link to="#"><i className="fa fa-pie-chart"></i> <span> Reports </span> <span className="menu-arrow"></span></Link>
+								<ul style={{ display: 'none' }}>
+									<li><Link to="/reports/expense-reports"> Expense Report </Link></li>
+									<li><Link to="reports/invoice-reports"> Invoice Report </Link></li>
+								</ul>
+							</li>
 						</ul>
 					</div>
 				</div>

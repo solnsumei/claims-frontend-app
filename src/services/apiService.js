@@ -18,6 +18,36 @@ export const fetchData = async (url) => {
   }
 }
 
+export const fetchUser = async () => {
+  try {
+    const response = await client.get('/auth/user');
+    return response.data.user;
+  } catch(error) {
+    checkAuthenticationError(error);
+    throw error;
+  }
+}
+
+export const saveTeamMember = async ({ id, data }) => {
+  try {
+    const response = await client.put(`/projects/${id}/assign-team`, data);
+    return response.data;
+  } catch(error) {
+    checkAuthenticationError(error);
+    throw error;
+  }
+}
+
+export const updatePassword = async ({ url, isUpdate = false, data }) => {
+  try {
+    const response = await client.post(`${url}?update=${isUpdate}`, data);
+    return response.data;
+  } catch(error) {
+    checkAuthenticationError(error);
+    throw error;
+  }
+}
+
 export const saveData = async ({ url, data, id }) => {
   let apiUrl = url;
   if (id) {

@@ -89,3 +89,18 @@ export const updateContractorResolver = () => yupResolver(
     password: passwordUpdate,
   })
 );
+
+const changePasswordSchema = yup.object().shape({
+  old_password: yup.string().required('Field is required'),
+  password: yup.string().required('Field is required').min(8).max(50),
+  password_confirmation: yup.string().required('Field is required').min(8).max(50),
+});
+
+
+export const changePasswordResolver = () => yupResolver(
+  changePasswordSchema.omit(['old_password'])
+);
+
+export const changePasswordUpdateResolver = () => yupResolver(
+  changePasswordSchema
+);

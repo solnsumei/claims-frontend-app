@@ -18,7 +18,7 @@ const Login = () => {
   const submitForm = async (data) => {
     try {
       await loginUser(data);
-      history.push("/");
+      history.replace("/");
     } catch (e) {
       setError(e.response.data.detail);
     }

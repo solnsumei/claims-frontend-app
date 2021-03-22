@@ -17,7 +17,7 @@ export const AuthProvider = ({ children }) => {
     const verified = verifyToken();
 
     if (!verified) {
-      queryClient.clear();
+      logoutUser();
     }
 
     return verified;
@@ -28,7 +28,7 @@ export const AuthProvider = ({ children }) => {
       const response = await client.post('/auth/login', data);
       
       setToken(response.data.token);
-      queryClient.setQueryData(types.USER, response.data);
+      queryClient.setQueryData(types.USER, response.data.user);
     } catch(error) {
       throw (error);
     }

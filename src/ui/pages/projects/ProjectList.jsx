@@ -14,7 +14,7 @@ const ProjectList = ({ projectList, editItem, deleteItem }) => {
                   <th>Project</th>
                   <th>Code</th>
                   <th>Budget</th>
-                  <th>Duration (Months)</th>
+                  <th>Duration</th>
                   <th>Status</th>
                   <th className="text-right">Action</th>
                 </tr>

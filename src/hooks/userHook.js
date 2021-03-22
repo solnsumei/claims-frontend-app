@@ -1,14 +1,12 @@
 import { useQuery } from 'react-query';
 import types from '../utils/types';
-import { useAuth } from '../providers/auth';
-import { fetchData } from '../services/apiService';
+import { fetchUser } from '../services/apiService';
 
 
 export const useAuthUser = () => {
-  const { isAuthenticated } = useAuth();
   
-  return useQuery(types.USER, () => fetchData('/auth/user'), {
-    enabled: !!isAuthenticated(),
+  return useQuery(types.USER, () => fetchUser(), {
     staleTime: 1000 * 6 * 10,
+    retry: 1,
   });
 }

@@ -6,7 +6,6 @@ import types from '../../../utils/types';
 import { createContractorResolver, updateContractorResolver } from '../../../utils/validators';
 import { saveData } from '../../../services/apiService';
 import InputField from '../../components/InputField';
-import SelectInput from '../../components/SelectInput';
 
 
 const ContractorForm = ({ user, isOpen, closeModal }) => {
@@ -65,18 +64,20 @@ const ContractorForm = ({ user, isOpen, closeModal }) => {
         </Modal.Header>
         <Modal.Body>
           <Form onSubmit={handleSubmit(submitForm)}>
-            <InputField
-              form={Form}
-              type="text"
-              name="name"
-              label="Name"
-              register={register}
-              required={true}
-              value={user?.name}
-              error={errors.name}
-            />
             <div className="row">
               <div className="col-sm-7">
+                <InputField
+                  form={Form}
+                  type="text"
+                  name="name"
+                  label="Name"
+                  register={register}
+                  required={true}
+                  value={user?.name}
+                  error={errors.name}
+                />
+              </div>
+              <div className="col-sm-5">
                 <InputField
                   form={Form}
                   type="text"
@@ -87,20 +88,6 @@ const ContractorForm = ({ user, isOpen, closeModal }) => {
                   isDisabled={!!(user && user?.username)}
                   value={user?.username}
                   error={errors.username}
-                />
-              </div>
-              <div className="col-sm-5">
-                <SelectInput
-                  form={Form}
-                  type="text"
-                  name="role"
-                  label="Role"
-                  required={true}
-                  itemsList={["Contractor"]}
-                  register={register}
-                  value={user?.role}
-                  error={errors.role}
-                  defaultOption={false}
                 />
               </div>
             </div>
@@ -146,6 +133,8 @@ const ContractorForm = ({ user, isOpen, closeModal }) => {
                 }
               </div>
             </div>
+
+            <Form.Control type="hidden" name="role" ref={register} value="Contractor" />
 
             <div className="submit-section">
               <Button className="submit-btn" type="submit">Save Contractor</Button>
