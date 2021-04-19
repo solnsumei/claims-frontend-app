@@ -71,12 +71,13 @@ const Sidebar = () => {
 								<span>Accounts</span>
 							</li>
 							<li className="submenu">
-								<Link to="#"><i className="fa fa-files-o"></i> <span> Invoices </span> <span className="menu-arrow"></span></Link>
+								<Link to="#"><i className="fa fa-files-o"></i> <span> Claims </span> <span className="menu-arrow"></span></Link>
 								<ul style={{ display: 'none' }}>
-									<li><Link to="/invoices/pending">Pending</Link></li>
-									<li><Link to="/invoices/approved">Approved</Link></li>
-									<li><Link to="/invoices/paid">Paid</Link></li>
-									<li><Link to="/invoices/cancelled">Cancelled</Link></li>
+									<li><Link to="/claims/pending">Pending</Link></li>
+									<li><Link to="/claims/approved">Approved</Link></li>
+									<li><Link to="/claims/paid">Paid</Link></li>
+									<li><Link to="/claims/cancelled">Cancelled</Link></li>
+									<li><Link to="/claims">All</Link></li>
 								</ul>
 							</li>
 							<li className="submenu">

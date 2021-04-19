@@ -15,15 +15,6 @@ jQuery(function() {
 		return false;
 	});
 	
-	// Select 2
-	
-	if($('.select').length > 0) {
-		$('.select').select2({
-			minimumResultsForSearch: -1,
-			width: '100%'
-		});
-	}
-	
 	// Modal Popup hide show
 
 	if($('.modal').length > 0 ){
@@ -45,7 +36,6 @@ jQuery(function() {
 
 	if($('.floating').length > 0 ){
 		$('.floating').on('focus blur', function (e) {
-		$(this).parents('.form-focus').toggleClass('focused', (e.type === 'focus' || this.value.length > 0));
 		}).trigger('blur');
 	}
 	
@@ -58,19 +48,6 @@ jQuery(function() {
 		$pageWrapper.css('min-height', prHeight);
 	});
 	
-	// Date Time Picker
-	
-	if($('.datetimepicker').length > 0) {
-		$('.datetimepicker').datetimepicker({
-			format: 'DD/MM/YYYY',
-			icons: {
-				up: "fa fa-angle-up",
-				down: "fa fa-angle-down",
-				next: 'fa fa-angle-right',
-				previous: 'fa fa-angle-left'
-			}
-		});
-	}
 	
 	// Datatable
 
