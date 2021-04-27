@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 
-const PageHeader = ({ title, subtitle, isHome, buttonTitle, onClick }) => {
+const PageHeader = ({ title, subtitle, isHome, buttonTitle, onClick, isCloseButton=false }) => {
   return (
     <div className="page-header">
       <div className={`row${buttonTitle ? ' align-items-center' : ''}`}>
@@ -12,7 +12,8 @@ const PageHeader = ({ title, subtitle, isHome, buttonTitle, onClick }) => {
           </ul>
         </div>
         {buttonTitle && <div className="col-auto float-right ml-auto">
-          <button className="btn add-btn" onClick={onClick}><i className="fa fa-plus"></i> {buttonTitle}</button>
+          <button className={`btn ${isCloseButton ? "btn-outline-secondary" : "add-btn"}`} onClick={onClick}>
+            <i className={`fa fa-${ isCloseButton ? "times" : "plus"}`}></i> {buttonTitle}</button>
         </div>}
       </div>
     </div>

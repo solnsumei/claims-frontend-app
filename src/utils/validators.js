@@ -1,5 +1,6 @@
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
+import { minDate } from './dateHelpers';
 
 
 const name = yup.string().required().min(3).max(30);
@@ -10,6 +11,16 @@ const email = yup.string().required().email().max(50);
 const password = yup.string().required().min(8).max(70);
 
 const departmentField = yup.string()
+.transform(value => {
+  if (value !== "") {
+    return value;
+  }
+
+  // Transform the value to undefined
+  return null;
+}).nullable().uuid("field is invalid");
+
+const projectField = yup.string()
 .transform(value => {
   if (value !== "") {
     return value;
@@ -103,4 +114,20 @@ export const changePasswordResolver = () => yupResolver(
 
 export const changePasswordUpdateResolver = () => yupResolver(
   changePasswordSchema
+);
+
+
+export const claimResolver = () => yupResolver(
+  yup.object().shape({
+    title: name,
+    description,
+    invoice_no: yup.string().required('field is required')
+      .min(2, 'min of 2 chars').max(15, 'max of 15 chars'),
+    project_id: projectField,
+    department_id: departmentField,
+    amount: yup.number().typeError('must be a number')
+      .min(1, "min value is 1").required("field is required"),
+    due_date: yup.date().typeError('invalid date')
+      .min(minDate(), "date must be at least 3 days from today"),
+  })
 );

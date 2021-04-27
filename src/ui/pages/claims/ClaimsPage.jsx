@@ -1,9 +1,12 @@
 import $ from 'jquery';
 import { useEffect } from 'react';
+import { useHistory } from 'react-router-dom';
 import PageHeader from '../../components/PageHeader';
 
 
 const ClaimsPage = () => {
+
+  const history = useHistory();
 
   useEffect(() => {
     // Select 2
@@ -19,7 +22,9 @@ const ClaimsPage = () => {
       <PageHeader
         title="Claims"
         buttonTitle="Create Claim"
-        onClick={() => {}}
+        onClick={() => {
+          history.push('/claims/new');
+        }}
       />
 
       <div className="row filter-row">

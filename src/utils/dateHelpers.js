@@ -9,3 +9,12 @@ export const toDateString = (dateString) => {
     return;
   }
 }
+
+
+export const minDate = () => {
+  return moment().add(3, 'days').format();
+}
+
+export const defaultDateValue = () => {
+  return moment().format("YYYY-MM-DD");
+}
