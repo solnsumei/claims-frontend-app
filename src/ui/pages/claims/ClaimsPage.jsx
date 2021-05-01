@@ -2,11 +2,16 @@ import $ from 'jquery';
 import { useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 import PageHeader from '../../components/PageHeader';
+import ClaimList from './ClaimList';
+import { useFetchQuery } from '../../../hooks/useApi';
+import types from '../../../utils/types';
 
 
 const ClaimsPage = () => {
 
   const history = useHistory();
+
+  const { data, isLoading } = useFetchQuery({ key: types.CLAIMS, url: '/claims/' });
 
   useEffect(() => {
     // Select 2
@@ -26,6 +31,8 @@ const ClaimsPage = () => {
           history.push('/claims/new');
         }}
       />
+
+      {isLoading && <p>Loading...</p>}
 
       <div className="row filter-row">
         <div className="col-sm-6 col-md-3">
@@ -55,88 +62,9 @@ const ClaimsPage = () => {
           <button className="btn btn-success btn-block"> Search </button>
         </div>
       </div>
-      <div className="row">
-        <div className="col-md-12">
-          <div className="table-responsive">
-            <table className="table table-striped custom-table mb-0">
-              <thead>
-                <tr>
-                  <th>#</th>
-                  <th>Invoice Number</th>
-                  <th>Client</th>
-                  <th>Created Date</th>
-                  <th>Due Date</th>
-                  <th>Amount</th>
-                  <th>Status</th>
-                  <th className="text-right">Action</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td>1</td>
-                  <td><a href="invoice-view.html">#INV-0001</a></td>
-                  <td>Global Technologies</td>
-                  <td>11 Mar 2019</td>
-                  <td>17 Mar 2019</td>
-                  <td>$2099</td>
-                  <td><span className="badge bg-inverse-success">Paid</span></td>
-                  <td className="text-right">
-                    <div className="dropdown dropdown-action">
-                      <a href="#" className="action-icon dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i className="material-icons">more_vert</i></a>
-                      <div className="dropdown-menu dropdown-menu-right">
-                        <a className="dropdown-item" href="edit-invoice.html"><i className="fa fa-pencil m-r-5"></i> Edit</a>
-                        <a className="dropdown-item" href="invoice-view.html"><i className="fa fa-eye m-r-5"></i> View</a>
-                        <a className="dropdown-item" href="#"><i className="fa fa-file-pdf-o m-r-5"></i> Download</a>
-                        <a className="dropdown-item" href="#"><i className="fa fa-trash-o m-r-5"></i> Delete</a>
-                      </div>
-                    </div>
-                  </td>
-                </tr>
-                <tr>
-                  <td>2</td>
-                  <td><a href="invoice-view.html">#INV-0002</a></td>
-                  <td>Delta Infotech</td>
-                  <td>11 Mar 2019</td>
-                  <td>17 Mar 2019</td>
-                  <td>$2099</td>
-                  <td><span className="badge bg-inverse-info">Sent</span></td>
-                  <td className="text-right">
-                    <div className="dropdown dropdown-action">
-                      <a href="#" className="action-icon dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i className="material-icons">more_vert</i></a>
-                      <div className="dropdown-menu dropdown-menu-right">
-                        <a className="dropdown-item" href="edit-invoice.html"><i className="fa fa-pencil m-r-5"></i> Edit</a>
-                        <a className="dropdown-item" href="invoice-view.html"><i className="fa fa-eye m-r-5"></i> View</a>
-                        <a className="dropdown-item" href="#"><i className="fa fa-file-pdf-o m-r-5"></i> Download</a>
-                        <a className="dropdown-item" href="#"><i className="fa fa-trash-o m-r-5"></i> Delete</a>
-                      </div>
-                    </div>
-                  </td>
-                </tr>
-                <tr>
-                  <td>3</td>
-                  <td><a href="invoice-view.html">#INV-0003</a></td>
-                  <td>Cream Inc</td>
-                  <td>11 Mar 2019</td>
-                  <td>17 Mar 2019</td>
-                  <td>$2099</td>
-                  <td><span className="badge bg-inverse-warning">Partially Paid</span></td>
-                  <td className="text-right">
-                    <div className="dropdown dropdown-action">
-                      <a href="#" className="action-icon dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i className="material-icons">more_vert</i></a>
-                      <div className="dropdown-menu dropdown-menu-right">
-                        <a className="dropdown-item" href="edit-invoice.html"><i className="fa fa-pencil m-r-5"></i> Edit</a>
-                        <a className="dropdown-item" href="invoice-view.html"><i className="fa fa-eye m-r-5"></i> View</a>
-                        <a className="dropdown-item" href="#"><i className="fa fa-file-pdf-o m-r-5"></i> Download</a>
-                        <a className="dropdown-item" href="#"><i className="fa fa-trash-o m-r-5"></i> Delete</a>
-                      </div>
-                    </div>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
+      <ClaimList 
+        claimsList={data}
+      />
     </>
   );
 }

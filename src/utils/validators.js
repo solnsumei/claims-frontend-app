@@ -131,3 +131,15 @@ export const claimResolver = () => yupResolver(
       .min(minDate(), "date must be at least 3 days from today"),
   })
 );
+
+const acceptedFileTypes = ['jpg', 'jpeg', 'pdf'];
+
+export const claimFileResolver = () => yupResolver(
+  yup.object().shape({
+    file: yup.mixed().required('field is required')
+      .test("fileType", 'Invalid file type, valid types are image jpegs and pdfs', (value) => {
+        const fileExtension = value ? value[0].name.split('.').pop() : undefined;
+        return value && acceptedFileTypes.includes(fileExtension);
+      }),
+  })
+);

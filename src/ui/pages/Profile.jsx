@@ -32,7 +32,7 @@ const Profile = () => {
                         <h3 className="user-name m-t-0 mb-0">{user.name}</h3>
 
 
-                        <div className="staff-id">Username : {user.username}</div>
+                        <div className="staff-id">Designation : {user.role}</div>
                         <div className="small doj text-muted">Created Date : {toDateString(user.created_at)}</div>
                         <div className="staff-msg"><Link className="btn btn-custom" to="/change-password">Change Password</Link></div>
                       </div>
@@ -41,8 +41,8 @@ const Profile = () => {
 
                       <ul className="personal-info">
                         <li>
-                          <div className="title">Role:</div>
-                          <div className="text">{user.role}</div>
+                          <div className="title">Username:</div>
+                          <div className="text">{user.username}</div>
                         </li>
                         <li>
                           <div className="title">Email:</div>

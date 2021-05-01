@@ -38,6 +38,21 @@ export const saveTeamMember = async ({ id, data }) => {
   }
 }
 
+export const uploadFile = async ({ id, data }) => {
+  const uploadClient = {...client};
+  try {
+    const response = await uploadClient.post(`/claims/${id}/upload-file`, data, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      }
+    });
+    return response.data;
+  } catch(error) {
+    checkAuthenticationError(error);
+    throw error;
+  }
+}
+
 export const updatePassword = async ({ url, isUpdate = false, data }) => {
   try {
     const response = await client.post(`${url}?update=${isUpdate}`, data);
@@ -64,6 +79,7 @@ export const saveData = async ({ url, data, id }) => {
     }
     return response.data;
   } catch(error) {
+    console.log(">>>>>>>", error.response.data);
     checkAuthenticationError(error);
     throw error;
   }

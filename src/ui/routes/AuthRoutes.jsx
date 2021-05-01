@@ -51,6 +51,9 @@ const AuthRoutes = () => {
           <AuthenticatedRoute exact path="/contractors" middleware={isAdmin}>
             <ContractorPage />
           </AuthenticatedRoute>
+          <AuthenticatedRoute path="/claims/new/:id" middleware={isActiveUser}>
+            <CreateClaimPage />
+          </AuthenticatedRoute>
           <AuthenticatedRoute exact path="/claims/new" middleware={isActiveUser}>
             <CreateClaimPage />
           </AuthenticatedRoute>

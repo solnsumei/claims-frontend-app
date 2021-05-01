@@ -39,12 +39,21 @@ const ChangePassword = () => {
         );
       }
     });
+  };
+
+  const closeHandler = () => {
+    history.push('/profile');
   }
 
   return (
     <>
       <ToastContainer />
-      <PageHeader title='Change Password' />
+      <PageHeader
+        title='Change Password'
+        buttonTitle={user && !user.uses_default_password ? "Close" : undefined}
+        isCloseButton={user && !user.uses_default_password}
+        onClick={closeHandler}
+      />
       <div className="row">
         <div className="col-md-6">
           <Form onSubmit={handleSubmit(submitForm)}>

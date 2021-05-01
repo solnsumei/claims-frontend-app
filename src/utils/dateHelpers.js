@@ -10,6 +10,15 @@ export const toDateString = (dateString) => {
   }
 }
 
+export const toServerDate = (dateString) => {
+  try {
+    const date = moment(dateString);
+    return date.format("YYYY-MM-DD");;
+  } catch (_) {
+    return;
+  }
+}
+
 
 export const minDate = () => {
   return moment().add(3, 'days').format();
