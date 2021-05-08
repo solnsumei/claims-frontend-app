@@ -8,6 +8,7 @@ const types = {
   CONTRACTORS: 'contractors',
   CLAIMS: 'claims',
   ROLES: 'roles',
+  MY_PROJECTS: 'myProjects'
 };
 
 export default types;

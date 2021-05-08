@@ -13,6 +13,8 @@ import ContractorPage from '../pages/contractors/ContractorPage';
 import ContractorDetails from '../pages/contractors/ContractorDetails';
 import ClaimsPage from '../pages/claims/ClaimsPage';
 import CreateClaimPage from '../pages/claims/CreateClaim';
+import ClaimDetails from '../pages/claims/ClaimDetails';
+import Invoice from '../pages/claims/Invoice';
 import NotFound from '../pages/NotFound';
 import ChangePassword from '../pages/ChangePassword';
 
@@ -56,6 +58,12 @@ const AuthRoutes = () => {
           </AuthenticatedRoute>
           <AuthenticatedRoute exact path="/claims/new" middleware={isActiveUser}>
             <CreateClaimPage />
+          </AuthenticatedRoute>
+          <AuthenticatedRoute exact path="/claims/:id/view-invoice" middleware={isActiveUser}>
+            <Invoice />
+          </AuthenticatedRoute>
+          <AuthenticatedRoute path="/claims/:id" middleware={isActiveUser}>
+            <ClaimDetails />
           </AuthenticatedRoute>
           <AuthenticatedRoute exact path="/claims" middleware={isActiveUser}>
             <ClaimsPage />

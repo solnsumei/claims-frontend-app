@@ -119,7 +119,6 @@ export const changePasswordUpdateResolver = () => yupResolver(
 
 export const claimResolver = () => yupResolver(
   yup.object().shape({
-    title: name,
     description,
     invoice_no: yup.string().required('field is required')
       .min(2, 'min of 2 chars').max(15, 'max of 15 chars'),
@@ -132,12 +131,12 @@ export const claimResolver = () => yupResolver(
   })
 );
 
-const acceptedFileTypes = ['jpg', 'jpeg', 'pdf'];
+const acceptedFileTypes = ['jpg', 'doc', 'docx', 'jpeg', 'pdf'];
 
 export const claimFileResolver = () => yupResolver(
   yup.object().shape({
     file: yup.mixed().required('field is required')
-      .test("fileType", 'Invalid file type, valid types are image jpegs and pdfs', (value) => {
+      .test("fileType", 'Invalid file type, valid types are docs, image jpegs and pdfs', (value) => {
         const fileExtension = value ? value[0].name.split('.').pop() : undefined;
         return value && acceptedFileTypes.includes(fileExtension);
       }),

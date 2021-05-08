@@ -20,7 +20,7 @@ export const fetchData = async (url) => {
 
 export const fetchUser = async () => {
   try {
-    const response = await client.get('/auth/user');
+    const response = await client.get('/user');
     return response.data.user;
   } catch(error) {
     checkAuthenticationError(error);
@@ -79,11 +79,22 @@ export const saveData = async ({ url, data, id }) => {
     }
     return response.data;
   } catch(error) {
-    console.log(">>>>>>>", error.response.data);
     checkAuthenticationError(error);
     throw error;
   }
 }
+
+
+export const updateClaim = async ({ url, data, initialApproval=false }) => {
+  try {
+    const response = await client.put(initialApproval ? `${url}/update` : url, data);
+    return response.data;
+  } catch(error) {
+    checkAuthenticationError(error);
+    throw error;
+  }
+}
+
 
 export const deleteItem = async (url) => {
   try {

@@ -4,183 +4,143 @@ import { useParams, Redirect, Link } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 import PageHeader from '../../components/PageHeader';
 import { useFetchQuery } from '../../../hooks/useApi';
-import { saveTeamMember } from '../../../services/apiService';
+import { useAuthUser } from '../../../hooks/userHook';
 import types from '../../../utils/types';
 import { toDateString } from '../../../utils/dateHelpers';
-import ProjectForm from './ProjectForm';
-import ProjectUsersForm from './ProjectUsersForm';
-import ProjectTeam from './ProjectTeam'
-import { getAvailableUsers } from '../../../utils/projectHelpers';
+import Invoice from './Invoice';
+// import ProjectForm from '../ProjectForm';
 
 
-const ProjectDetails = () => {
+const ClaimDetails = () => {
   const { id } = useParams();
+  const adminUpdatableStatuses = ["Pending", "Initial Approval", "Approved"];
+  const managerUpdatableStatuses = ["Pending", "Initial Approval"];
   const queryClient = useQueryClient();
-  const [showMembersModal, setMembersModalVisibility] = useState(false);
-  const [availableUsers, setAvailableUsers] = useState([]);
   const [showFormModal, setFormModalVisibility] = useState(false);
-  const [selectedItem, setItem] = useState(null);
+  const [showInvoice, setInvoiceVisibility] = useState(false);
+  
 
-  const { data: project, isLoading, isError } = useFetchQuery({ key: [types.PROJECTS, id], url: `/projects/${id}` });
-  const { data: employees } = useFetchQuery({ key: types.EMPLOYEES, url: '/users/' });
-  const { data: contractors } = useFetchQuery({ key: types.CONTRACTORS, url: '/users/?contractors=true' });
+  const { data: claim, isLoading, isError } = useFetchQuery({ key: [types.CLAIMS, id], url: `/claims/${id}` });
+  const { data: user } = useAuthUser();
 
-  useEffect(() => {
-    if (project && employees && contractors) {
-      setAvailableUsers(getAvailableUsers({ project, allUsers: employees.concat(contractors) }));
-    }
-  }, [project, employees, contractors]);
-
-  const mutation = useMutation((data) => saveTeamMember({ id: project?.id, data }));
-
-  const toggleMembersForm = () => {
-    setMembersModalVisibility(!showMembersModal);
-  }
-
-  const updateTeamMembers = async (members, action) => {
-    mutation.mutate({ user_ids: members, action }, {
-      onSuccess: () => {
-        queryClient.invalidateQueries([types.PROJECTS, project.id]);
-        setMembersModalVisibility(false);
-      },
-      onError: (error) => {
-        console.log('error >>>>>>', error);
-      }
-    });
-  }
-
-  const showForm = (item) => {
-    setItem(item);
-    setFormModalVisibility(true);
-  };
-
-  const closeForm = (message = null) => {
-    if (selectedItem) {
-      setItem(null);
-    }
-
-    if (message) {
-      toast.success(message);
-    }
-
-    setFormModalVisibility(false);
-  };
 
   return (
     <>
       <PageHeader
-        title={project?.name || 'Project Details'}
-        subtitle="Projects"
-        buttonTitle="Edit Project"
-        onClick={showForm}
+        title={claim?.claim_id || 'Claim Details'}
+        subtitle="Claims"
       />
 
       {isLoading && <p>Loading...</p>}
-      {isError && <Redirect to="/projects" />}
+      {isError && <Redirect to="/claims" />}
 
       <ToastContainer />
 
-      {project && <div className="row">
-        <div className="col-lg-8">
-          <div className="card">
-            <div className="card-body">
-              <div className="project-title">
-                <h5 className="card-title">{project.name}</h5>
-              </div>
-              <p>{project.description}</p>
-            </div>
-          </div>
-          <div className="card">
-            <div className="card-header">
-              <h3 className="card-title mb-0">
-                Team
-                <button
-                  className="float-right btn btn-primary btn-sm"
-                  onClick={toggleMembersForm}>
-                  <i className="fa fa-plus"></i> Add
-              </button>
-              </h3>
-            </div>
-            <ProjectTeam
-              teamMembers={project?.team}
-              onRemove={updateTeamMembers}
-            />
-          </div>
-        </div>
-        <div className="col-lg-4">
-          <div className="card">
-            <div className="card-body">
-              <h6 className="card-title m-b-15">Project details</h6>
-              <table className="table table-striped table-border">
-                <tbody>
-                  <tr>
-                    <td>Project Code:</td>
-                    <td className="text-right">{project.code}</td>
-                  </tr>
-                  <tr>
-                    <td>Budget:</td>
-                    <td className="text-right">N{project.budget}</td>
-                  </tr>
-                  {project?.department && <tr>
-                    <td>Department:</td>
-                    <td className="text-right">{project.department.name}</td>
-                  </tr>
-                  }
-                  <tr>
-                    <td>Created:</td>
-                    <td className="text-right">{toDateString(project.created_at)}</td>
-                  </tr>
-                  <tr>
-                    <td>Duration:</td>
-                    <td className="text-right">{project.duration} Month(s)</td>
-                  </tr>
-                  <tr>
-                    <td>Status:</td>
-                    <td className="text-right">{project.status}</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-          <div className="card project-user">
-            <div className="card-body">
-              <h6 className="card-title m-b-20">Project manager</h6>
-              <ul className="list-box">
-                <li>
-                  <Link to={`/employees/${project.manager.id}`}>
-                    <div className="list-item">
-                      <div className="list-left">
-                        <span className="avatar"><i className="fa fa-user"></i></span>
-                      </div>
-                      <div className="list-body">
-                        <span className="message-author">{project.manager?.name}</span>
-                        <div className="clearfix"></div>
-                      </div>
-                    </div>
-                  </Link>
-                </li>
-              </ul>
-            </div>
-          </div>
-        </div>
-      </div>}
+      {claim && <div className="row">
+						<div className="col-md-12">
+							<div className="card">
+								<div className="card-body">
+									<div className="row">
+										<div className="col-sm-6 m-b-20">
+				 							<ul className="list-unstyled">
+												<li><h5><strong>{claim?.user?.name}</strong></h5></li>
+												<li>{claim?.user?.email}</li>
+												<li>Designation: {claim?.user?.role}</li>
+												<li>Username: {claim?.user?.username}</li>
+											</ul>
+										</div>
+										<div className="col-sm-6 m-b-20">
+											<div className="invoice-details">
+												<h3 className="text-uppercase">Invoice #{claim?.invoice_no}</h3>
+												<ul className="list-unstyled">
+													<li>Date: <span>{claim && claim.created_at ? toDateString(claim.created_at) : '-'}</span></li>
+													<li>Due date: <span>{claim && claim?.due_date ? toDateString(claim.due_date) : '-'}</span></li>
+                          { claim && claim.status === "Approved" && <li>Payment date: <span>{toDateString(claim.payment_date)}</span></li>}
+												</ul>
+											</div>
+										</div>
+									</div>
+									<div className="row">
+										<div className="col-sm-6 col-lg-5 m-b-20">
+                    <span className="text-muted">Details:</span>
+											<ul className="list-unstyled invoice-payment-details">
+                      { claim && claim.department && <li><h5>Invoiced to: <span className="text-right"><strong>{claim.department.name}</strong></span></h5></li>}
+                        <li><h5>Project Name: <span className="text-right">{claim?.project?.name || '-'}</span></h5></li>
+												<li><h5>Project Code: <span className="text-right">{claim?.project?.code || '-'}</span></h5></li>
+                        <li>Status <span className="text-right">{claim?.status || '-'}</span></li>
+											</ul>
+										</div>
+										<div className="col-sm-6 col-lg-7 m-b-20">
+											<p className="text-right">
+                        <button className="btn btn-primary" onClick={() => setInvoiceVisibility(true)}>
+                          View Invoice
+                        </button>
+                      </p>
+                      <div className="row invoice-payment">
+											<div className="col-sm-4">
+											</div>
+											<div className="col-sm-8">
+												<div className="m-b-20">
+													<div className="table-responsive no-border">
+														<table className="table mb-0">
+															<tbody>
+																<tr>
+																	<th>Subtotal:</th>
+																	<td className="text-right">#{claim?.amount}</td>
+																</tr>
+																<tr>
+																	<th>Total Due:</th>
+																	<td className="text-right text-primary"><h5>#{claim?.amount}</h5></td>
+																</tr>
+															</tbody>
+														</table>
+													</div>
+												</div>
+											</div>
+										</div>
+										
+										</div>
+									</div>
+                  { user && (user.is_admin || user.role === "Admin") && <div>
+										<div className="invoice-info">
+                      <p className="text-right">
+                        { claim && adminUpdatableStatuses.includes(claim.status) && <> <button className="btn btn-primary">
+                            Approve
+                        </button> 
+                        &nbsp;
+                        <button className="btn btn-danger">
+                            Reject
+                        </button> 
+                      </>}
+                      </p>
+										</div>
+									</div> }
+                  { user && user.role === "Manager" && <div>
+										<div className="invoice-info">
+                      <p className="text-right">
+                        { claim && managerUpdatableStatuses.includes(claim.status) && <> <button className="btn btn-primary">
+                            Approve
+                        </button> 
+                        &nbsp;
+                        <button className="btn btn-danger">
+                            Reject
+                        </button> 
+                      </>}
+                      </p>
+										</div>
+									</div> }
+								</div>
+							</div>
+						</div>
+					</div>
+      }
 
-      {project?.name && <ProjectForm
-        isOpen={showFormModal}
-        closeModal={closeForm}
-        project={project}
-      />}
-
-      {project?.name && <ProjectUsersForm
-        isOpen={showMembersModal}
-        closeModal={toggleMembersForm}
-        project={project}
-        availableUsers={availableUsers}
-        onSave={updateTeamMembers}
-        loading={mutation.isLoading}
+      {claim && showInvoice && <Invoice
+        invoiceUrl={`http://localhost:5000/${claim.file_url}`}
+        closeModal={() => setInvoiceVisibility(false)}
       />}
     </>
   );
 }
 
-export default ProjectDetails;
+export default ClaimDetails;

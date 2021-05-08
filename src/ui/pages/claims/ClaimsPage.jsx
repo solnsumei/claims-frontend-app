@@ -12,6 +12,7 @@ const ClaimsPage = () => {
   const history = useHistory();
 
   const { data, isLoading } = useFetchQuery({ key: types.CLAIMS, url: '/claims/' });
+  const { data: projects } = useFetchQuery({ key: types.MY_PROJECTS, url: '/user/projects' });
 
   useEffect(() => {
     // Select 2

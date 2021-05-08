@@ -19,10 +19,10 @@ const SelectInput = ({
         { defaultOption && <option value="">Select {label}</option>}
         {
           valueKey
-            ? itemsList && itemsList.map(item => <option key={item[valueKey]} value={item[valueKey]}>
+            ? itemsList && itemsList.length > 0 && itemsList.map(item => <option key={item[valueKey]} value={item[valueKey]}>
               {item[valueName]}
             </option>)
-            : itemsList && itemsList.map(item => <option key={item}>
+            : itemsList && itemsList.length > 0 && itemsList.map(item => <option key={item}>
               {item}
             </option>)
         }
