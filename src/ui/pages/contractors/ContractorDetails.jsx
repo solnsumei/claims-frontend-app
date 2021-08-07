@@ -5,12 +5,13 @@ import { useFetchQuery } from '../../../hooks/useApi';
 import types from '../../../utils/types';
 import { toDateString } from '../../../utils/dateHelpers';
 import ContractorForm from './ContractorForm';
+import UserTabs from '../../components/UserTabs';
 
 
 const ContractorDetails = () => {
   const { id } = useParams();
 
-  const { data: contractor, isLoading, isError } = useFetchQuery({ key: [types.EMPLOYEES, id], url: `/users/${id}` })
+  const { data: contractor, isLoading, isError } = useFetchQuery({ key: [types.CONTRACTORS, id], url: `/users/${id}` })
   const [showFormModal, setFormModalVisibility] = useState(false);
   const [selectedItem, setItem] = useState(null);
 
@@ -30,118 +31,72 @@ const ContractorDetails = () => {
   return (
     <>
       <PageHeader
-        title={contractor?.name || 'Contractor Details'}
+        title='Contractor Details'
         subtitle="Contractors"
-        buttonTitle="Edit Contractor"
-        onClick={showForm}
       />
 
       {isLoading && <p>Loading...</p>}
       {isError && <Redirect to="/contractors" />}
 
-      {contractor && <div className="row">
-        <div className="col-lg-8">
-          <div className="card">
-            <div className="card-body">
-              <div className="contractor-title">
-                <h5 className="card-title">{contractor.name}</h5>
-              </div>
-              <p>{contractor.description}</p>
-            </div>
-          </div>
-          <div className="card">
-            <div className="card-body">
-              <h5 className="card-title m-b-20">Contractors</h5>
-              <ul className="files-list">
-                <li>
-                  <div className="files-cont">
-                    <div className="file-type">
-                      <span className="files-icon"><i className="fa fa-file-pdf-o"></i></span>
-                    </div>
-                    <div className="files-info">
-                      <span className="file-name text-ellipsis"><Link to="#">AHA Selfcare Mobile Application Test-Cases.xls</Link></span>
-                      <span className="file-author"><Link to="#">Richard Miles</Link></span> <span className="file-date">May 31st at 6:53 PM</span>
-                      <div className="file-size">Size: 14.8Mb</div>
-                    </div>
-                    <ul className="files-action">
-                      <li className="dropdown dropdown-action">
-                        <Link to="#" className="dropdown-toggle btn btn-link" data-toggle="dropdown" aria-expanded="false"><i className="material-icons">more_horiz</i></Link>
-                        <div className="dropdown-menu dropdown-menu-right">
-                          <Link className="dropdown-item" to="#">Download</Link>
-                          <Link className="dropdown-item" to="#">Share</Link>
-                          <Link className="dropdown-item" to="#">Delete</Link>
-                        </div>
-                      </li>
-                    </ul>
+      {contractor && <><div className="card mb-0">
+        <div className="card-body">
+          <div className="row">
+            <div className="col-md-12">
+              <div className="profile-view">
+                <div className="profile-img-wrap">
+                  <div className="avatar">
+                    <i className="fa fa-user fa-3x"></i>
                   </div>
-                </li>
-              </ul>
-            </div>
-          </div>
-        </div>
-        <div className="col-lg-4">
-          <div className="card">
-            <div className="card-body">
-              <h6 className="card-title m-b-15">Contractor details</h6>
-              <table className="table table-striped table-border">
-                <tbody>
-                  <tr>
-                    <td>Contractor Code:</td>
-                    <td className="text-right">{contractor.code}</td>
-                  </tr>
-                  <tr>
-                    <td>Budget:</td>
-                    <td className="text-right">N{contractor.budget}</td>
-                  </tr>
-                  {contractor?.department && <tr>
-                    <td>Department:</td>
-                    <td className="text-right">{contractor.department.name}</td>
-                    </tr>
-                  }
-                  <tr>
-                    <td>Created:</td>
-                    <td className="text-right">{toDateString(contractor.created_at)}</td>
-                  </tr>
-                  <tr>
-                    <td>Duration:</td>
-                    <td className="text-right">{contractor.duration} Month(s)</td>
-                  </tr>
-                  <tr>
-                    <td>Status:</td>
-                    <td className="text-right">{contractor.status}</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-          <div className="card contractor-contractor">
-            <div className="card-body">
-              <h6 className="card-title m-b-20">Contractor manager</h6>
-              <ul className="list-box">
-                <li>
-                  <Link to={`/contractors/${contractor.manager.id}`}>
-                    <div className="list-item">
-                      <div className="list-left">
-                        <span className="avatar"><i className="fa fa-contractor"></i></span>
-                      </div>
-                      <div className="list-body">
-                        <span className="message-author">{contractor.manager?.name}</span>
-                        <div className="clearfix"></div>
+                </div>
+                <div className="profile-basic">
+                  <div className="row">
+                    <div className="col-md-5">
+                      <div className="profile-info-left">
+                        <h3 className="user-name m-t-0 mb-0">{contractor.name}</h3>
+
+
+                        <div className="staff-id">Contractor ID : {contractor.email}</div>
+                        <div className="small doj text-muted">Created Date : {toDateString(contractor.created_at)}</div>
+                        <div className="staff-msg"><button className="btn btn-custom">Deactivate</button></div>
                       </div>
                     </div>
-                  </Link>
-                </li>
-              </ul>
+                    <div className="col-md-7">
+                      <ul className="personal-info">
+                        <li>
+                          <div className="title">Role:</div>
+                          <div className="text">{contractor.role}</div>
+                        </li>
+                        <li>
+                          <div className="title">Email:</div>
+                          <div className="text">{contractor.email}</div>
+                        </li>
+                        <li>
+                          <div className="title">Department:</div>
+                          <div className="text">{contractor.department?.name || '-'}</div>
+                        </li>
+                        <li>
+                          <div className="title">Status:</div>
+                          <div className="text">{contractor.status}</div>
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+                <div className="pro-edit"><Link className="edit-icon" to="#" onClick={showForm}><i className="fa fa-pencil"></i></Link></div>
+              </div>
             </div>
           </div>
         </div>
-      </div>}
+      </div>
 
-      <ContractorForm
-        isOpen={showFormModal}
+        <UserTabs employee={contractor} />
+      </>}
+
+      {showFormModal && <ContractorForm
+        isOpen={true}
         closeModal={closeForm}
-        contractor={contractor}
-      />
+        user={contractor}
+      />}
     </>
   );
 }

@@ -1,13 +1,11 @@
 import { Link } from 'react-router-dom';
-import { toDateString } from '../../../utils/dateHelpers';
+import { toDateString } from '../../utils/dateHelpers';
 
-const ClaimItem = ({ claim, onEdit, onDelete }) => {
+const UserClaimItem = ({ claim, index, onEdit, onDelete }) => {
   return (
     <tr>
       <td><Link to={`/claims/${claim.id}`}>{ claim.claim_id }</Link></td>
       <td>#{ claim.invoice_no }</td>
-      <td>{ claim.user.name }</td>
-      <td>{ claim.project.name }</td>
       <td>{ toDateString(claim.created_at) }</td>
       <td>{ claim.due_date ? toDateString(claim.due_date) : '-' }</td>
       <td>{ Number(claim.amount).toLocaleString() }</td>
@@ -28,4 +26,4 @@ const ClaimItem = ({ claim, onEdit, onDelete }) => {
   );
 }
 
-export default ClaimItem;
+export default UserClaimItem;

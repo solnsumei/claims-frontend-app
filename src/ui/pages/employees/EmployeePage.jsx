@@ -82,14 +82,15 @@ const EmployeePage = () => {
 
       <EmployeeList
         employeeList={data}
+        isLoading={isLoading}
         editItem={showForm}
         deleteItem={showDeleteForm} />
       
-      <EmployeeForm
-        isOpen={showFormModal}
+      {showFormModal && <EmployeeForm
+        isOpen={true}
         closeModal={closeForm}
         user={selectedItem}
-      />
+      />}
       
       {showDeleteModal && <DeleteModal 
         title="Employee"

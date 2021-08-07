@@ -5,11 +5,11 @@ import { useAuth } from '../../providers/auth';
 const Header = () => {
 	const { logoutUser, isAuthenticated } = useAuth();
 
-	const { username } = isAuthenticated();
+	const { name } = isAuthenticated();
 
 	return (
 		<>
-			{ username && (<div className="header">
+			{ name && (<div className="header">
 				<div className="header-left">
 					<Link to="/" className="logo">
 						<img src="/logo.png" alt="CLA" className="logo-img" />
@@ -145,7 +145,7 @@ const Header = () => {
 						<Link to="#" className="dropdown-toggle nav-link" data-toggle="dropdown">
 							<span className="user-img"><img src="assets/img/profiles/avatar-21.jpg" alt="" />
 								<span className="status online"></span></span>
-							<span>{username}</span>
+							<span>{name}</span>
 						</Link>
 						<div className="dropdown-menu">
 							<Link className="dropdown-item" to="/profile">My Profile</Link>

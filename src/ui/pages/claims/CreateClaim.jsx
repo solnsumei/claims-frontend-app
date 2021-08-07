@@ -13,6 +13,7 @@ import PageHeader from '../../components/PageHeader';
 import SelectInput from '../../components/SelectInput';
 import InputField from '../../components/InputField';
 import DateField from '../../components/DateField';
+import Loading from '../../components/Loading';
 
 
 const CreateClaim = () => {
@@ -23,7 +24,7 @@ const CreateClaim = () => {
   const { data: projects } = useFetchQuery({ key: types.MY_PROJECTS, url: '/user/projects' });
 
 
-  const { register, handleSubmit, errors, setError } = useForm({
+  const { register, handleSubmit, formState: { errors }, setError } = useForm({
     resolver: !id ? claimResolver() : claimFileResolver(),
   });
 
@@ -76,7 +77,7 @@ const CreateClaim = () => {
         buttonTitle={id ? undefined : "Close"}
         isCloseButton={true}
         onClick={() => {
-          history.push("/claims");
+          history.replace("/claims");
         }}
       />
       <div className="row">
@@ -160,7 +161,7 @@ const CreateClaim = () => {
               </div>
             </div>
             <div className="row">
-              <div className="col-sm-6 col-md-4">
+              <div className="col-sm-6 col-md-6">
                 <DateField
                   form={Form}
                   name="due_date"
@@ -173,7 +174,10 @@ const CreateClaim = () => {
               </div>
             </div>
             <div className="submit-section">
-              <button className="btn btn-primary submit-btn">Proceed</button>
+              <button className="btn btn-primary submit-btn">
+                Proceed
+                {mutation.isLoading && <Loading />}
+              </button>
             </div>
           </Form>}
 
@@ -182,12 +186,14 @@ const CreateClaim = () => {
               <div className="col-sm-8">
                 <Form.File id="upload-invoice">
                   <Form.File.Label>Upload Invoice or Receipt</Form.File.Label>
-                  <Form.File.Input ref={register} name="file" required />
+                  <Form.File.Input {...register("file")} required />
                 </Form.File>
                 {errors && errors.file && <p className="text-danger">{errors.file.message}</p>}
               </div>
               <div className="col-sm-4">
-                <button className="btn btn-primary submit-btn">Upload</button>
+                <button className="btn btn-primary submit-btn">Upload
+                  {mutation.isLoading && <Loading />}
+                </button>
               </div>
             </div>
           </Form>}

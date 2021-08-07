@@ -34,7 +34,7 @@ const verifyTokenExpiry = token => {
       if (decoded.exp * 1000 < (new Date().getTime())) {
         removeToken();
       }
-
+      
       return decoded;
       
     } catch (error) {

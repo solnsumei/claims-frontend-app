@@ -41,10 +41,6 @@ const Profile = () => {
 
                       <ul className="personal-info">
                         <li>
-                          <div className="title">Username:</div>
-                          <div className="text">{user.username}</div>
-                        </li>
-                        <li>
                           <div className="title">Email:</div>
                           <div className="text">{user.email}</div>
                         </li>

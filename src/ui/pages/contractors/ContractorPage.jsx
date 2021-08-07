@@ -82,14 +82,15 @@ const ContractorPage = () => {
 
       <ContractorList
         contractorList={data}
+        isLoading={isLoading}
         editItem={showForm}
         deleteItem={showDeleteForm} />
       
-      <ContractorForm
-        isOpen={showFormModal}
+      {showFormModal &&<ContractorForm
+        isOpen={true}
         closeModal={closeForm}
         user={selectedItem}
-      />
+      />}
       
       {showDeleteModal && <DeleteModal 
         title="Contractor"

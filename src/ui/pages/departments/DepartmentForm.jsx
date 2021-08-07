@@ -4,11 +4,12 @@ import { Modal, Button, Form } from 'react-bootstrap';
 import types from '../../../utils/types';
 import { departmentResolver } from '../../../utils/validators';
 import { saveData } from '../../../services/apiService';
+import Loading from '../../components/Loading';
 
 
 const DepartmentForm = ({ department, isOpen, closeModal, queryClient }) => {
 
-  const { register, handleSubmit, errors, setError, reset } = useForm({
+  const { register, handleSubmit, formState: { errors }, setError, reset } = useForm({
     resolver: departmentResolver(),
   });
 
@@ -48,11 +49,13 @@ const DepartmentForm = ({ department, isOpen, closeModal, queryClient }) => {
           <Form method="post" onSubmit={handleSubmit(submitForm)}>
             <Form.Group controlId="department-name">
               <Form.Label>Department Name <span className="text-danger">*</span></Form.Label>
-              <Form.Control type="text" name="name" ref={register} defaultValue={department?.name} />
+              <Form.Control type="text" {...register('name')} defaultValue={department?.name} />
               {errors.name && <p className="text-danger">{errors.name.message}</p>}
             </Form.Group>
             <div className="submit-section">
-              <Button className="submit-btn" type="submit">Submit</Button>
+              <Button className="submit-btn" type="submit">Submit
+                {mutation.isLoading && <Loading />}
+              </Button>
             </div>
           </Form>
         </Modal.Body>

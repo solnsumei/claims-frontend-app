@@ -7,7 +7,7 @@ import AdminLinks from './AdminLinks';
 
 const Sidebar = () => {
 	const { isAuthenticated } = useAuth();
-	const { username, isAdmin } = isAuthenticated();
+	const { name, isAdmin, role } = isAuthenticated();
 	const { pathname } = useLocation();
 
 	useEffect(() => {
@@ -53,7 +53,7 @@ const Sidebar = () => {
 
 	return (
 		<>
-			{ username && (<div className="sidebar" id="sidebar">
+			{ name && (<div className="sidebar" id="sidebar">
 				<div className="sidebar-inner">
 					<div id="sidebar-menu" className="sidebar-menu">
 						<ul>
@@ -66,25 +66,19 @@ const Sidebar = () => {
 							<li className={pathname === '/profile' ? 'active' : ''}>
 								<Link to="/profile"><i className="fa fa-user"></i> <span> My Profile</span> </Link>
 							</li>
-							{isAdmin && <AdminLinks />}
+							{(isAdmin || role === 'Admin' || role === 'Manager') && <AdminLinks role={role} />}
 							<li className="menu-title">
 								<span>Accounts</span>
 							</li>
 							<li className="submenu">
 								<Link to="#"><i className="fa fa-files-o"></i> <span> Claims </span> <span className="menu-arrow"></span></Link>
 								<ul style={{ display: 'none' }}>
-									<li><Link to="/claims/pending">Pending</Link></li>
-									<li><Link to="/claims/approved">Approved</Link></li>
-									<li><Link to="/claims/paid">Paid</Link></li>
-									<li><Link to="/claims/cancelled">Cancelled</Link></li>
+									<li><Link to="/claims/filter/pending">Pending</Link></li>
+									<li><Link to="/claims/filter/verified">Verified</Link></li>
+									<li><Link to="/claims/filter/approved">Approved</Link></li>
+									<li><Link to="/claims/filter/paid">Paid</Link></li>
+									<li><Link to="/claims/filter/cancelled">Cancelled</Link></li>
 									<li><Link to="/claims">All</Link></li>
-								</ul>
-							</li>
-							<li className="submenu">
-								<Link to="#"><i className="fa fa-pie-chart"></i> <span> Reports </span> <span className="menu-arrow"></span></Link>
-								<ul style={{ display: 'none' }}>
-									<li><Link to="/reports/expense-reports"> Expense Report </Link></li>
-									<li><Link to="reports/invoice-reports"> Invoice Report </Link></li>
 								</ul>
 							</li>
 						</ul>

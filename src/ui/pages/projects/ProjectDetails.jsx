@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useMutation, useQueryClient } from 'react-query';
 import { useParams, Redirect, Link } from 'react-router-dom';
+import { Badge } from 'react-bootstrap';
 import { ToastContainer, toast } from 'react-toastify';
 import PageHeader from '../../components/PageHeader';
 import { useFetchQuery } from '../../../hooks/useApi';
@@ -11,9 +12,13 @@ import ProjectForm from './ProjectForm';
 import ProjectUsersForm from './ProjectUsersForm';
 import ProjectTeam from './ProjectTeam'
 import { getAvailableUsers } from '../../../utils/projectHelpers';
+import { useAuth } from '../../../providers/auth';
+import ProjectClaimList from './ProjectClaimList';
 
 
 const ProjectDetails = () => {
+  const { isAuthenticated } = useAuth();
+  const { role } = isAuthenticated();
   const { id } = useParams();
   const queryClient = useQueryClient();
   const [showMembersModal, setMembersModalVisibility] = useState(false);
@@ -21,7 +26,15 @@ const ProjectDetails = () => {
   const [showFormModal, setFormModalVisibility] = useState(false);
   const [selectedItem, setItem] = useState(null);
 
-  const { data: project, isLoading, isError } = useFetchQuery({ key: [types.PROJECTS, id], url: `/projects/${id}` });
+  const { data: project, isLoading, isError } = useFetchQuery({
+    key: [types.PROJECTS, id], url: `/projects/${id}`
+  });
+  const { data: claims, isLoading: claimsLoading } = useFetchQuery({
+    key: [types.PROJECTS, 'claims'], url: `/projects/${id}/claims`
+  });
+  const { data: stats, isLoading: statsLoading } = useFetchQuery({
+    key: [types.PROJECTS, 'stats'], url: `/projects/${id}/stats`
+  });
   const { data: employees } = useFetchQuery({ key: types.EMPLOYEES, url: '/users/' });
   const { data: contractors } = useFetchQuery({ key: types.CONTRACTORS, url: '/users/?contractors=true' });
 
@@ -44,7 +57,8 @@ const ProjectDetails = () => {
         setMembersModalVisibility(false);
       },
       onError: (error) => {
-        console.log('error >>>>>>', error);
+        // console.log('error >>>>>>', error?.response?.data);
+        toast.error(error?.response?.data?.detail);
       }
     });
   }
@@ -71,7 +85,7 @@ const ProjectDetails = () => {
       <PageHeader
         title={project?.name || 'Project Details'}
         subtitle="Projects"
-        buttonTitle="Edit Project"
+        buttonTitle={role !== types.MANAGER ? "Edit Project" : undefined}
         onClick={showForm}
       />
 
@@ -106,6 +120,14 @@ const ProjectDetails = () => {
               onRemove={updateTeamMembers}
             />
           </div>
+          <div className="card">
+            <div className="card-header">
+              <h3 className="card-title mb-0">
+                Claims
+              </h3>
+            </div>
+            { !claimsLoading && claims && <ProjectClaimList claimsList={claims}/>}
+          </div>
         </div>
         <div className="col-lg-4">
           <div className="card">
@@ -119,8 +141,26 @@ const ProjectDetails = () => {
                   </tr>
                   <tr>
                     <td>Budget:</td>
-                    <td className="text-right">N{project.budget}</td>
+                    <td className="text-right">
+                    <h4>
+                      <Badge pill className="bg-primary">
+                        N{Number(project.budget).toLocaleString()}
+                      </Badge>
+                    </h4>
+                      
+                    </td>
                   </tr>
+                  { !statsLoading && stats && <>
+                    {stats.map(stat => <tr key={stat.status}>
+                      <td>{stat.status} Claims:</td>
+                      <td className="text-right">
+                        <h4><Badge pill className={stat.status === 'Paid' ? "bg-success" : "bg-warning"}>
+                          N{Number(stat.total).toLocaleString()}
+                        </Badge>
+                        </h4>
+                      </td>
+                    </tr>)}
+                  </>}
                   {project?.department && <tr>
                     <td>Department:</td>
                     <td className="text-right">{project.department.name}</td>
@@ -142,7 +182,7 @@ const ProjectDetails = () => {
               </table>
             </div>
           </div>
-          <div className="card project-user">
+          {role !== types.MANAGER && <div className="card project-user">
             <div className="card-body">
               <h6 className="card-title m-b-20">Project manager</h6>
               <ul className="list-box">
@@ -161,11 +201,11 @@ const ProjectDetails = () => {
                 </li>
               </ul>
             </div>
-          </div>
+          </div>}
         </div>
       </div>}
 
-      {project?.name && <ProjectForm
+      {role !== types.MANAGER && project?.name && <ProjectForm
         isOpen={showFormModal}
         closeModal={closeForm}
         project={project}

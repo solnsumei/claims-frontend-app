@@ -8,7 +8,7 @@ const DateField = ({
   return (
     <Form.Group controlId={name}>
       <Form.Label>{label} {required ? '*' : ''}</Form.Label>
-      <Form.Control type='date' name={name} ref={register} defaultValue={value} readOnly={isDisabled} />
+      <Form.Control type='date' {...register(name)} defaultValue={value} readOnly={isDisabled} />
       {error && <p className="text-danger">{error.message}</p>}
     </Form.Group>
   );

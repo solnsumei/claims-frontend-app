@@ -8,8 +8,8 @@ export const useFetchQuery = ({ key, url }) => {
   const auth = isAuthenticated();
   
   return useQuery(key, () => fetchData(url), {
-    enabled: !!(auth?.username),
+    enabled: !!(auth?.name),
     retry: 1,
-    retryDelay: 3000,
+    retryDelay: 3000
   });
 }

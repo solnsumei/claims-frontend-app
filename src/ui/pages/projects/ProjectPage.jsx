@@ -8,9 +8,13 @@ import types from '../../../utils/types';
 import ProjectForm from './ProjectForm';
 import DeleteModal from '../../components/DeleteModal';
 import { deleteItem } from '../../../services/apiService';
+import { useAuth } from '../../../providers/auth';
 
 
 const ProjectPage = () => {
+  const { isAuthenticated } = useAuth();
+  const { role } = isAuthenticated();
+
   const queryClient = useQueryClient();
 
   const { data, isLoading } = useFetchQuery({ key: types.PROJECTS, url: '/projects/' })
@@ -73,7 +77,7 @@ const ProjectPage = () => {
     <>
       <PageHeader
         title="Projects"
-        buttonTitle="Add Project"
+        buttonTitle={ role === types.ADMIN ? "Add Project" : undefined}
         onClick={showForm}
       />
 
@@ -85,13 +89,13 @@ const ProjectPage = () => {
         editItem={showForm}
         deleteItem={showDeleteForm} />
       
-      <ProjectForm
-        isOpen={showFormModal}
+      {role === types.ADMIN && showFormModal && <ProjectForm
+        isOpen={true}
         closeModal={closeForm}
         project={selectedItem}
-      />
+      />}
       
-      {showDeleteModal && <DeleteModal 
+      {role === types.ADMIN && showDeleteModal && <DeleteModal 
         title="project"
         onDelete={handleDelete}
         closeModal={closeDeleteModal} />}

@@ -85,9 +85,15 @@ export const saveData = async ({ url, data, id }) => {
 }
 
 
-export const updateClaim = async ({ url, data, initialApproval=false }) => {
+export const updateClaim = async ({ url, data, verify=false }) => {
   try {
-    const response = await client.put(initialApproval ? `${url}/update` : url, data);
+    let response;
+    if (verify) {
+      response = await client.post(`${url}/verify`, data);
+    } else {
+      response = await client.put(url, data);
+    }
+    
     return response.data;
   } catch(error) {
     checkAuthenticationError(error);

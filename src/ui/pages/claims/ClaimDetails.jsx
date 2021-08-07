@@ -1,34 +1,47 @@
-import { useState, useEffect } from 'react';
-import { useMutation, useQueryClient } from 'react-query';
-import { useParams, Redirect, Link } from 'react-router-dom';
+import { useState} from 'react';
+import { useParams, Redirect, useHistory } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 import PageHeader from '../../components/PageHeader';
 import { useFetchQuery } from '../../../hooks/useApi';
 import { useAuthUser } from '../../../hooks/userHook';
 import types from '../../../utils/types';
+import { nextStatus } from '../../../utils/claimHelpers';
 import { toDateString } from '../../../utils/dateHelpers';
 import Invoice from './Invoice';
-// import ProjectForm from '../ProjectForm';
+import RejectClaimForm from './RejectClaimForm';
+import ClaimUpdateForm from './ClaimUpdateForm';
 
 
 const ClaimDetails = () => {
+	const history = useHistory();
   const { id } = useParams();
-  const adminUpdatableStatuses = ["Pending", "Initial Approval", "Approved"];
-  const managerUpdatableStatuses = ["Pending", "Initial Approval"];
-  const queryClient = useQueryClient();
+  const adminUpdatableStatuses = ["Pending", "Verified", "Approved"];
+  const managerUpdatableStatuses = ["Pending"];
   const [showFormModal, setFormModalVisibility] = useState(false);
   const [showInvoice, setInvoiceVisibility] = useState(false);
+	const [showRejectForm, setShowRejectForm] = useState(false);
   
 
   const { data: claim, isLoading, isError } = useFetchQuery({ key: [types.CLAIMS, id], url: `/claims/${id}` });
   const { data: user } = useAuthUser();
 
+	const closeUpdateFormModal = (message=null) => {
+    if (message) {
+      toast.success(message);
+    }
+    setFormModalVisibility(false);
+  };
 
   return (
     <>
       <PageHeader
         title={claim?.claim_id || 'Claim Details'}
         subtitle="Claims"
+				isCloseButton={true}
+				buttonTitle="Close"
+				onClick={() => {
+          history.replace("/claims");
+        }}
       />
 
       {isLoading && <p>Loading...</p>}
@@ -42,20 +55,20 @@ const ClaimDetails = () => {
 								<div className="card-body">
 									<div className="row">
 										<div className="col-sm-6 m-b-20">
-				 							<ul className="list-unstyled">
+				 							{ claim && user && claim.user.id !== user.id && <ul className="list-unstyled">
 												<li><h5><strong>{claim?.user?.name}</strong></h5></li>
 												<li>{claim?.user?.email}</li>
 												<li>Designation: {claim?.user?.role}</li>
-												<li>Username: {claim?.user?.username}</li>
-											</ul>
+											</ul>}
 										</div>
 										<div className="col-sm-6 m-b-20">
 											<div className="invoice-details">
 												<h3 className="text-uppercase">Invoice #{claim?.invoice_no}</h3>
 												<ul className="list-unstyled">
-													<li>Date: <span>{claim && claim.created_at ? toDateString(claim.created_at) : '-'}</span></li>
-													<li>Due date: <span>{claim && claim?.due_date ? toDateString(claim.due_date) : '-'}</span></li>
-                          { claim && claim.status === "Approved" && <li>Payment date: <span>{toDateString(claim.payment_date)}</span></li>}
+													<li>Date: <span>{claim.created_at ? toDateString(claim.created_at) : '-'}</span></li>
+													<li>Due date: <span>{claim?.due_date ? toDateString(claim.due_date) : '-'}</span></li>
+													{claim.tax_percent && <li>Witholding Tax: {claim.tax_percent}%</li>}
+                          {claim.status === "Approved" && <li>Payment date: <span>{toDateString(claim.payment_date)}</span></li>}
 												</ul>
 											</div>
 										</div>
@@ -64,7 +77,7 @@ const ClaimDetails = () => {
 										<div className="col-sm-6 col-lg-5 m-b-20">
                     <span className="text-muted">Details:</span>
 											<ul className="list-unstyled invoice-payment-details">
-                      { claim && claim.department && <li><h5>Invoiced to: <span className="text-right"><strong>{claim.department.name}</strong></span></h5></li>}
+                      {claim.department && <li><h5>Invoiced to: <span className="text-right"><strong>{claim.department.name} Dept</strong></span></h5></li>}
                         <li><h5>Project Name: <span className="text-right">{claim?.project?.name || '-'}</span></h5></li>
 												<li><h5>Project Code: <span className="text-right">{claim?.project?.code || '-'}</span></h5></li>
                         <li>Status <span className="text-right">{claim?.status || '-'}</span></li>
@@ -86,11 +99,15 @@ const ClaimDetails = () => {
 															<tbody>
 																<tr>
 																	<th>Subtotal:</th>
-																	<td className="text-right">#{claim?.amount}</td>
+																	<td className="text-right">#{Number(claim.amount).toLocaleString()}</td>
+																</tr>
+																<tr>
+																	<th>WTH Tax:</th>
+																	<td className="text-right">#{Number(claim.tax || 0.0).toLocaleString()}</td>
 																</tr>
 																<tr>
 																	<th>Total Due:</th>
-																	<td className="text-right text-primary"><h5>#{claim?.amount}</h5></td>
+																	<td className="text-right text-primary"><h4>#{Number(claim.amount - (claim.tax || 0)).toLocaleString()}</h4></td>
 																</tr>
 															</tbody>
 														</table>
@@ -98,18 +115,22 @@ const ClaimDetails = () => {
 												</div>
 											</div>
 										</div>
-										
 										</div>
 									</div>
-                  { user && (user.is_admin || user.role === "Admin") && <div>
+								</div>
+							</div>
+							{ user && (user.is_admin || user.role === "Admin") && <div>
 										<div className="invoice-info">
                       <p className="text-right">
-                        { claim && adminUpdatableStatuses.includes(claim.status) && <> <button className="btn btn-primary">
-                            Approve
+                        { adminUpdatableStatuses.includes(claim.status) && <> <button
+													className="btn btn-primary"
+													onClick={() => setFormModalVisibility(true)}>
+                            { nextStatus(claim).label }
                         </button> 
                         &nbsp;
-                        <button className="btn btn-danger">
-                            Reject
+                        <button className="btn btn-danger"
+													onClick={() => setShowRejectForm(true)}>
+                            Cancel
                         </button> 
                       </>}
                       </p>
@@ -118,19 +139,23 @@ const ClaimDetails = () => {
                   { user && user.role === "Manager" && <div>
 										<div className="invoice-info">
                       <p className="text-right">
-                        { claim && managerUpdatableStatuses.includes(claim.status) && <> <button className="btn btn-primary">
-                            Approve
-                        </button> 
+                        { managerUpdatableStatuses.includes(claim.status) && <> <button 
+														className="btn btn-primary"
+														onClick={() => setFormModalVisibility(true)}
+														>
+														 Verify
+                        	</button>
                         &nbsp;
-                        <button className="btn btn-danger">
-                            Reject
+                        <button
+													className="btn btn-danger"
+													onClick={() => setShowRejectForm(true)}
+													>
+                            Cancel
                         </button> 
                       </>}
                       </p>
 										</div>
 									</div> }
-								</div>
-							</div>
 						</div>
 					</div>
       }
@@ -138,6 +163,16 @@ const ClaimDetails = () => {
       {claim && showInvoice && <Invoice
         invoiceUrl={`http://localhost:5000/${claim.file_url}`}
         closeModal={() => setInvoiceVisibility(false)}
+      />}
+
+			{claim && showRejectForm && <RejectClaimForm
+        claim={claim}
+        closeModal={() => setShowRejectForm(false)}
+      />}
+
+			{claim && showFormModal && <ClaimUpdateForm
+        claim={claim}
+        closeModal={closeUpdateFormModal}
       />}
     </>
   );

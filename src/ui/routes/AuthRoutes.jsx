@@ -1,5 +1,5 @@
 import { Switch, Route } from 'react-router-dom';
-import { isActiveUser, isAdmin } from '../../utils/projectHelpers';
+import { isActiveUser, isAdmin, isManager } from '../../utils/projectHelpers';
 import AppLayout from '../layouts/AppLayout';
 import AuthenticatedRoute from '../middlewares/AuthenticatedRoute';
 import Home from '../pages/Home';
@@ -14,9 +14,9 @@ import ContractorDetails from '../pages/contractors/ContractorDetails';
 import ClaimsPage from '../pages/claims/ClaimsPage';
 import CreateClaimPage from '../pages/claims/CreateClaim';
 import ClaimDetails from '../pages/claims/ClaimDetails';
-import Invoice from '../pages/claims/Invoice';
 import NotFound from '../pages/NotFound';
 import ChangePassword from '../pages/ChangePassword';
+import ReportsPage from '../pages/reports/ReportsPage';
 
 
 const AuthRoutes = () => {
@@ -35,22 +35,22 @@ const AuthRoutes = () => {
           <AuthenticatedRoute exact path="/departments" middleware={isAdmin}>
             <DepartmentPage />
           </AuthenticatedRoute>
-          <AuthenticatedRoute path="/projects/:id" middleware={isAdmin}>
+          <AuthenticatedRoute path="/projects/:id" middleware={isManager}>
             <ProjectDetails />
           </AuthenticatedRoute>
-          <AuthenticatedRoute exact path="/projects" middleware={isAdmin}>
+          <AuthenticatedRoute exact path="/projects" middleware={isManager}>
             <ProjectPage />
           </AuthenticatedRoute>
           <AuthenticatedRoute path="/employees/:id" middleware={isAdmin}>
             <EmployeeDetails />
           </AuthenticatedRoute>
-          <AuthenticatedRoute exact path="/employees" middleware={isAdmin}>
+          <AuthenticatedRoute exact path="/employees" middleware={isManager}>
             <EmployeePage />
           </AuthenticatedRoute>
           <AuthenticatedRoute path="/contractors/:id" middleware={isAdmin}>
             <ContractorDetails />
           </AuthenticatedRoute>
-          <AuthenticatedRoute exact path="/contractors" middleware={isAdmin}>
+          <AuthenticatedRoute exact path="/contractors" middleware={isManager}>
             <ContractorPage />
           </AuthenticatedRoute>
           <AuthenticatedRoute path="/claims/new/:id" middleware={isActiveUser}>
@@ -59,14 +59,17 @@ const AuthRoutes = () => {
           <AuthenticatedRoute exact path="/claims/new" middleware={isActiveUser}>
             <CreateClaimPage />
           </AuthenticatedRoute>
-          <AuthenticatedRoute exact path="/claims/:id/view-invoice" middleware={isActiveUser}>
-            <Invoice />
+          <AuthenticatedRoute exact path="/claims/filter/:status" middleware={isActiveUser}>
+            <ClaimsPage />
           </AuthenticatedRoute>
           <AuthenticatedRoute path="/claims/:id" middleware={isActiveUser}>
             <ClaimDetails />
           </AuthenticatedRoute>
           <AuthenticatedRoute exact path="/claims" middleware={isActiveUser}>
             <ClaimsPage />
+          </AuthenticatedRoute>
+          <AuthenticatedRoute exact path="/reports/invoice-reports" middleware={isActiveUser}>
+            <ReportsPage />
           </AuthenticatedRoute>
           <Route path="*">
             <NotFound />

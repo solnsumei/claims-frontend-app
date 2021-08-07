@@ -5,10 +5,14 @@ const PageHeader = ({ title, subtitle, isHome, buttonTitle, onClick, isCloseButt
     <div className="page-header">
       <div className={`row${buttonTitle ? ' align-items-center' : ''}`}>
         <div className={buttonTitle ? 'col' : 'col-sm-12'}>
-          <h3 className="page-title">{isHome ? "Welcome Admin" : title}</h3>
+          <h3 className="page-title">{title ? title : "Welcome Admin"}</h3>
           <ul className="breadcrumb">
-            {title && <li className="breadcrumb-item"><Link to="/">Dashboard</Link></li>}
-            <li className="breadcrumb-item active">{subtitle || title || "Dashboard"}</li>
+            {!isHome && title && <li className="breadcrumb-item"><Link to="/">Dashboard</Link></li>}
+            <li className="breadcrumb-item active">
+              {isHome ? "Dashboard" : (subtitle 
+                ? <Link to={`/${subtitle}`}>{subtitle}</Link>
+                : (title || "Dashboard"))}
+            </li>
           </ul>
         </div>
         {buttonTitle && <div className="col-auto float-right ml-auto">

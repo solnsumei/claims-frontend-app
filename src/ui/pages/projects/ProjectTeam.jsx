@@ -16,7 +16,7 @@ const ProjectTeam = ({ teamMembers, onRemove }) => {
                   <span className="file-name text-ellipsis">{item.name}</span>
                   <span className="file-author"><small>{ item.role === 'Contractor' ? 'Contractor' : 'Employee'}</small></span>
                 </div>
-                <ul className="files-action">
+                { onRemove && <ul className="files-action">
                   <li className="dropdown dropdown-action">
                     <Link to="#" className="dropdown-toggle btn btn-link" data-toggle="dropdown" aria-expanded="false"><i className="material-icons">more_vert</i></Link>
                     <div className="dropdown-menu dropdown-menu-right">
@@ -31,7 +31,7 @@ const ProjectTeam = ({ teamMembers, onRemove }) => {
                       </Link>
                     </div>
                   </li>
-                </ul>
+                </ul>}
               </div>
             </li>
           ))}

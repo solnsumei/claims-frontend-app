@@ -8,16 +8,23 @@ import { useFetchQuery } from '../../../hooks/useApi';
 import { saveData } from '../../../services/apiService';
 import InputField from '../../components/InputField';
 import SelectInput from '../../components/SelectInput';
+import Loading from '../../components/Loading';
+import { useAuth } from '../../../providers/auth';
 
 
 const EmployeeForm = ({ user, isOpen, closeModal }) => {
+  const { isAuthenticated } = useAuth();
+  const { role } = isAuthenticated();
   const queryClient = useQueryClient();
   const [resetPassword, setResetPassword] = useState(false);
 
-  const { data: departments } = useFetchQuery({ key: types.DEPARTMENTS, url: '/departments/' });
+  const { data: departments } = useFetchQuery({
+    key: role === types.MANAGER ? types.PROJECTS : types.DEPARTMENTS,
+    url: role === types.MANAGER ? '/user/' :'/departments/' 
+  });
   const { data: roles } = useFetchQuery({ key: types.ROLES, url: '/auth/roles' });
 
-  const { register, handleSubmit, errors, setError, reset } = useForm({
+  const { register, handleSubmit, formState: { errors }, setError, reset } = useForm({
     resolver: user?.name ? updateEmployeeResolver() : createEmployeeResolver(),
   });
 
@@ -82,35 +89,21 @@ const EmployeeForm = ({ user, isOpen, closeModal }) => {
                 />
               </div>
               <div className="col-sm-5">
+                <div></div>
                 <SelectInput
                   form={Form}
                   type="text"
                   name="role"
                   label="Role"
                   required={true}
-                  itemsList={roles}
+                  itemsList={role === types.MANAGER ? ["Staff"] : roles}
                   register={register}
                   value={user?.role}
                   error={errors.role}
                 />
               </div>
             </div>
-            <div className="row">
-              <div className="col-sm-6">
-                <InputField
-                  form={Form}
-                  type="text"
-                  name="username"
-                  label="Username"
-                  register={register}
-                  required={true}
-                  isDisabled={!!(user && user?.username)}
-                  value={user?.username}
-                  error={errors.username}
-                />
-              </div>
-              <div className="col-sm-6">
-                <InputField
+            <InputField
                   form={Form}
                   type="email"
                   name="email"
@@ -120,8 +113,6 @@ const EmployeeForm = ({ user, isOpen, closeModal }) => {
                   value={user?.email}
                   error={errors.email}
                 />
-              </div>
-            </div>
             <div className="row">
               <div className="col-sm-6">
                 {!user?.id
@@ -138,7 +129,7 @@ const EmployeeForm = ({ user, isOpen, closeModal }) => {
                   : <>
                   <Form.Label>Password</Form.Label>
                   <InputGroup>
-                  <Form.Control type="text" name="password" ref={register} disabled={!resetPassword} />
+                  <Form.Control type="text" {...register('password')} disabled={!resetPassword} />
                     <InputGroup.Append>
                       <Button
                         variant="outline-secondary"
@@ -152,7 +143,7 @@ const EmployeeForm = ({ user, isOpen, closeModal }) => {
                 }
               </div>
               <div className="col-sm-6">
-                <SelectInput
+                {role !== types.MANAGER && <SelectInput
                   form={Form}
                   type="text"
                   name="department_id"
@@ -163,11 +154,29 @@ const EmployeeForm = ({ user, isOpen, closeModal }) => {
                   valueName="name"
                   value={user?.department?.id || user?.department_id}
                   error={errors.department_id}
-                />
+                />}
               </div>
             </div>
+            {role !== types.MANAGER && <div className="row">
+              <div className="col-sm-6">
+                <SelectInput
+                  form={Form}
+                  type="text"
+                  name="status"
+                  label="Status"
+                  itemsList={['active', 'inactive']}
+                  defaultOption={false}
+                  register={register}
+                  value={user?.status}
+                  error={errors.status}
+                />
+              </div>
+            </div>}
             <div className="submit-section">
-              <Button className="submit-btn" type="submit">Save Employee</Button>
+              <Button className="submit-btn" type="submit">
+                Save Employee
+                {mutation.isLoading && <Loading />}
+              </Button>
             </div>
           </Form>
         </Modal.Body>

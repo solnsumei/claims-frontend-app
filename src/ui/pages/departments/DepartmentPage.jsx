@@ -84,12 +84,13 @@ const DepartmentPage = () => {
         editItem={showForm}
         deleteItem={showDeleteForm} />
       
-      <DepartmentForm
-        isOpen={showFormModal}
+      {showFormModal && <DepartmentForm
+        isOpen={true}
         closeModal={closeForm}
         department={selectedDepartment}
         queryClient={queryClient}
-      />
+      />}
+      
       {showDeleteModal && <DeleteModal 
         title="department"
         onDelete={handleDelete}

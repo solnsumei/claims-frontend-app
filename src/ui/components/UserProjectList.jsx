@@ -1,4 +1,4 @@
-const EmployeeProjectList = ({ projectList }) => {
+const UserProjectList = ({ projectList }) => {
   return (
     <>
       <div className="card-body">
@@ -23,4 +23,4 @@ const EmployeeProjectList = ({ projectList }) => {
   );
 }
 
-export default EmployeeProjectList;
+export default UserProjectList;

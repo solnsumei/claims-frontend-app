@@ -3,11 +3,13 @@ import { Link, useHistory } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { useAuth } from '../../providers/auth';
 import { loginResolver } from '../../utils/validators';
+import Loading from '../components/Loading';
 
 
 const Login = () => {
-  const  [error, setError] = useState(null); 
-  const { register, handleSubmit, errors } = useForm({
+  const  [error, setError] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const { register, handleSubmit, formState: { errors } } = useForm({
     resolver: loginResolver(),
   });
 
@@ -17,10 +19,13 @@ const Login = () => {
 
   const submitForm = async (data) => {
     try {
+      setLoading(true);
       await loginUser(data);
+      setLoading(false);
       history.replace("/");
     } catch (e) {
-      setError(e.response.data.detail);
+      setLoading(false)
+      setError(e.response?.data?.detail);
     }
   }
 
@@ -49,14 +54,13 @@ const Login = () => {
                 </div>}
                 <form onSubmit={handleSubmit(submitForm)}>
                   <div className="form-group">
-                    <label>Username</label>
+                    <label>Email</label>
                     <input
                       className="form-control"
-                      type="text"
-                      name="username"
-                      ref={register}
+                      type="email"
+                      {...register("email")}
                     />
-                    {errors.username && <p className="text-danger">{errors.username.message}</p>}
+                    {errors.email && <p className="text-danger">{errors.email.message}</p>}
                   </div>
                   <div className="form-group">
                     <div className="row">
@@ -72,13 +76,15 @@ const Login = () => {
                     <input
                       className="form-control"
                       type="password"
-                      name="password"
-                      ref={register}
+                      {...register("password")}
                     />
                     {errors.password && <p className="text-danger">{errors.password.message}</p>}
                   </div>
                   <div className="form-group text-center">
-                    <button className="btn btn-primary account-btn" type="submit">Login</button>
+                    <button className="btn btn-primary account-btn" type="submit">
+                      Login
+                      {loading && <Loading />}
+                    </button>
                   </div>
                 </form>
               </div>

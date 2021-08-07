@@ -1,18 +1,22 @@
 import { Link } from 'react-router-dom';
+import types from '../../../utils/types';
 
 
-const EmployeeItem = ({ employee, index, onEdit, onDelete }) => {
+const EmployeeItem = ({ role, employee, index, onEdit, onDelete }) => {
+
   return (
     <tr>
       <td>{ index + 1 }</td>
-      <td><Link to={`/employees/${employee.id}`}>{ employee.name }</Link></td>
-      <td>{ employee.username }</td>
+      <td>{role !== types.MANAGER 
+        ? <Link to={`/employees/${employee.id}`}>{ employee.name }</Link>
+        : `${employee.name}`}
+      </td>
       <td>{ employee.email }</td>
       <td>{ employee.role }</td>
       <td>{ employee.department?.name }</td>
       <td>{ employee.status }</td>
       <td className="text-right">
-        <div className="dropdown dropdown-action">
+        { role !== types.MANAGER && <div className="dropdown dropdown-action">
           <Link to="#" className="action-icon dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
             <i className="material-icons">more_vert</i>
           </Link>
@@ -28,7 +32,7 @@ const EmployeeItem = ({ employee, index, onEdit, onDelete }) => {
               <i className="fa fa-trash-o m-r-5"></i> Delete
             </Link>
           </div>
-        </div>
+        </div>}
       </td>
     </tr>
   );

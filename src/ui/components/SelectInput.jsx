@@ -10,8 +10,7 @@ const SelectInput = ({
       <Form.Label>{label} {required ? '*' : ''}</Form.Label>
       <Form.Control
         as="select"
-        name={name}
-        ref={register}
+        {...register(name)}
         placeholder={`Select ${label}`}
         defaultValue={value}
         disabled={isDisabled}

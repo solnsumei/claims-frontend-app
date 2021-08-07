@@ -18,7 +18,7 @@ const ChangePassword = () => {
 
   const queryClient = useQueryClient();
 
-  const { register, handleSubmit, errors, setError, reset } = useForm({
+  const { register, handleSubmit, formState: { errors }, setError, reset } = useForm({
     resolver: user && user.uses_default_password ? changePasswordResolver() : changePasswordUpdateResolver(),
   });
 

@@ -7,6 +7,7 @@ import { useFetchQuery } from '../../../hooks/useApi';
 import { saveData } from '../../../services/apiService';
 import InputField from '../../components/InputField';
 import SelectInput from '../../components/SelectInput';
+import Loading from '../../components/Loading';
 
 
 const ProjectForm = ({ project, isOpen, closeModal }) => {
@@ -15,7 +16,7 @@ const ProjectForm = ({ project, isOpen, closeModal }) => {
   const { data: departments } = useFetchQuery({ key: types.DEPARTMENTS, url: '/departments/' });
   const { data: users } = useFetchQuery({ key: types.EMPLOYEES, url: '/users/' });
 
-  const { register, handleSubmit, errors, setError, reset } = useForm({
+  const { register, handleSubmit, formState: { errors }, setError, reset } = useForm({
     resolver: projectResolver(),
   });
 
@@ -149,7 +150,9 @@ const ProjectForm = ({ project, isOpen, closeModal }) => {
               </div>
             </div>
             <div className="submit-section">
-              <Button className="submit-btn" type="submit">Save Project</Button>
+              <Button className="submit-btn" type="submit">Save Project
+                {mutation.isLoading && <Loading />}
+              </Button>
             </div>
           </Form>
         </Modal.Body>

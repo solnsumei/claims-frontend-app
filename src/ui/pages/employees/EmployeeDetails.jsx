@@ -1,12 +1,11 @@
 import { useState } from 'react';
 import { useParams, Redirect, Link } from 'react-router-dom';
-import { Tabs, Tab } from 'react-bootstrap';
 import PageHeader from '../../components/PageHeader';
 import { useFetchQuery } from '../../../hooks/useApi';
 import types from '../../../utils/types';
 import { toDateString } from '../../../utils/dateHelpers';
 import EmployeeForm from './EmployeeForm';
-import EmployeeProjectList from './EmployeeProjectList';
+import UserTabs from '../../components/UserTabs';
 
 
 const EmployeeDetails = () => {
@@ -56,7 +55,7 @@ const EmployeeDetails = () => {
                         <h3 className="user-name m-t-0 mb-0">{employee.name}</h3>
 
 
-                        <div className="staff-id">Employee ID : {employee.username}</div>
+                        <div className="staff-id">Employee ID : {employee.email}</div>
                         <div className="small doj text-muted">Created Date : {toDateString(employee.created_at)}</div>
                         <div className="staff-msg"><button className="btn btn-custom">Deactivate</button></div>
                       </div>
@@ -90,23 +89,7 @@ const EmployeeDetails = () => {
         </div>
       </div>
 
-        <div className="card tab-box">
-          <div className="row user-tabs">
-            <div className="col-lg-12 col-md-12 col-sm-12 line-tabs">
-              <Tabs transition={false} defaultActiveKey="projects" id="uncontrolled-tab-example" className="nav-tabs-bottom">
-                <Tab eventKey="projects" title="Projects" className="nav-item nav-link">
-                  {employee?.projects?.length > 0
-                    ? <EmployeeProjectList projectList={employee.projects} />
-                    : <p>No items to display</p>
-                  }
-                </Tab>
-                <Tab eventKey="claims" title="Claims" className="nav-item nav-link">
-                  No item to display
-                </Tab>
-              </Tabs>
-            </div>
-          </div>
-        </div>
+      <UserTabs employee={employee} />
       </>}
 
       <EmployeeForm
