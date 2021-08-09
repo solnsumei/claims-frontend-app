@@ -1,24 +1,14 @@
-import $ from 'jquery';
-import { useEffect } from 'react';
 import ClaimItem from './ClaimItem';
 
 
-const ClaimList = ({ claimsList, isLoading, editItem, deleteItem }) => {
-
-  useEffect(() => {
-    if (!isLoading) {
-      $('#my-table').DataTable({
-        "pageLength": 50
-      });
-    }
-  }, [isLoading]);
+const ClaimList = ({ tableId, claimsList, editItem, deleteItem }) => {
 
   return (
     <>
       <div className="row">
         <div className="col-md-12">
           <div className="table-responsive">
-            <table className="table table-striped custom-table mb-0" id="my-table">
+            <table className="table table-striped custom-table mb-0" id={tableId}>
               <thead>
                 <tr>
                   <th>ID</th>
@@ -33,7 +23,7 @@ const ClaimList = ({ claimsList, isLoading, editItem, deleteItem }) => {
                 </tr>
               </thead>
               <tbody>
-                {claimsList?.map(claim => <ClaimItem claim={claim} onEdit={editItem} onDelete={deleteItem} key={claim.id}/>)}
+                {claimsList.map(claim => <ClaimItem claim={claim} onEdit={editItem} onDelete={deleteItem} key={claim.id}/>)}
               </tbody>
             </table>
           </div>

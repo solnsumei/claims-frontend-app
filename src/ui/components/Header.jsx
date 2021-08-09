@@ -149,7 +149,6 @@ const Header = () => {
 						</Link>
 						<div className="dropdown-menu">
 							<Link className="dropdown-item" to="/profile">My Profile</Link>
-							<Link className="dropdown-item" to="/settings">Settings</Link>
 							<Link className="dropdown-item" to="#" onClick={() => logoutUser()}>Logout</Link>
 						</div>
 					</li>

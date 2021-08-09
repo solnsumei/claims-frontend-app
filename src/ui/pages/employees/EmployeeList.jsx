@@ -10,7 +10,7 @@ const EmployeeList = ({ isLoading, employeeList, editItem, deleteItem }) => {
   const { role } = isAuthenticated();
 
   useEffect(() => {
-    if (!isLoading) {
+    if (!$.fn.DataTable.isDataTable('#my-table')) {
       $('#my-table').DataTable({ "pageLength": 25 });
     }
   }, [isLoading]);
@@ -20,7 +20,7 @@ const EmployeeList = ({ isLoading, employeeList, editItem, deleteItem }) => {
       <div className="row">
         <div className="col-md-12">
           <div>
-            <table className="table table-striped custom-table mb-0" id="my-table">
+            {employeeList && <table className="table table-striped custom-table mb-0" id="my-table">
               <thead>
                 <tr>
                   <th style={{ width: '30px' }}>#</th>
@@ -33,8 +33,7 @@ const EmployeeList = ({ isLoading, employeeList, editItem, deleteItem }) => {
                 </tr>
               </thead>
               <tbody>
-                {employeeList && employeeList.length > 0
-                  && employeeList.map((item, i) => 
+                {employeeList?.map((item, i) => 
                     <EmployeeItem
                       role={role}
                       key={item.id}
@@ -44,7 +43,7 @@ const EmployeeList = ({ isLoading, employeeList, editItem, deleteItem }) => {
                     />)
                 }
               </tbody>
-            </table>
+            </table>}
           </div>
         </div>
       </div>
