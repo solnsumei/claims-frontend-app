@@ -161,7 +161,7 @@ const ClaimDetails = () => {
       }
 
       {claim && showInvoice && <Invoice
-        invoiceUrl={`http://localhost:5000/${claim.file_url}`}
+        invoiceUrl={`${process.env.REACT_APP_DOMAIN}/${claim.file_url}`}
         closeModal={() => setInvoiceVisibility(false)}
       />}
 

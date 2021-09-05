@@ -174,14 +174,26 @@ export const reportResolver = () => yupResolver(
 );
 
 
-const acceptedFileTypes = ['jpg', 'doc', 'docx', 'jpeg', 'pdf'];
+const acceptedFileTypes = ['jpg', 'jpeg', 'pdf'];
 
 export const claimFileResolver = () => yupResolver(
   yup.object().shape({
     file: yup.mixed().required('field is required')
-      .test("fileType", 'Invalid file type, valid types are docs, image jpegs and pdfs', (value) => {
+      .test("fileType", 'Invalid file type, valid types are image jpegs and pdfs', (value) => {
         const fileExtension = value ? value[0].name.split('.').pop() : undefined;
         return value && acceptedFileTypes.includes(fileExtension);
+      }),
+  })
+);
+
+const ocrAcceptedFileTypes = ['jpg', 'png', 'jpeg', 'pdf'];
+
+export const claimOcrFileResolver = () => yupResolver(
+  yup.object().shape({
+    file: yup.mixed().required('field is required')
+      .test("fileType", 'File type is not an image', (value) => {
+        const fileExtension = value ? value[0].name.split('.').pop() : undefined;
+        return value && ocrAcceptedFileTypes.includes(fileExtension);
       }),
   })
 );

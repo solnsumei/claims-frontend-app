@@ -31,65 +31,76 @@ const Login = () => {
 
   return (
     <div className="account-page">
-      <div className="main-wrapper">
+      <div className="main-wrapper align-items-center">
         <div className="account-content">
           <div className="container">
-            <div className="account-logo">
-              <Link to="/"><h3>Claims Management App</h3></Link>
-            </div>					
-            <div className="account-box">
-              <div className="account-wrapper">
-                <h3 className="account-title">Login</h3>
-                <p className="account-subtitle">Access to our dashboard</p>
-                {error && <div className="alert alert-danger alert-dismissible fade show" role="alert">
-                  {error}
-								  <button 
-                    type="button"
-                    className="close"
-                    data-dismiss="alert"
-                    aria-label="Close"
-                    onClick={() => setError(null)}>
-                    <span aria-hidden="true">×</span>
-                  </button>
-                </div>}
-                <form onSubmit={handleSubmit(submitForm)}>
-                  <div className="form-group">
-                    <label>Email</label>
-                    <input
-                      className="form-control"
-                      type="email"
-                      {...register("email")}
-                    />
-                    {errors.email && <p className="text-danger">{errors.email.message}</p>}
-                  </div>
-                  <div className="form-group">
-                    <div className="row">
-                      <div className="col">
-                        <label>Password</label>
+            <div className="row">
+              <div className="col-lg-6 d-flex align-items-center justify-content-center logos">
+                <div className="account-logo">
+                  <p className="d-none d-lg-block">
+                    <img src="/receipt.svg" alt="logo" />
+                  </p>
+                  <Link to="/"><h3>Claims Management</h3></Link>
+                  <p className="d-none d-lg-block">You will never need to print or store receipts again</p>
+                </div>
+              </div>
+              <div className="col-lg-6">			
+                <div className="account-box">
+                  <div className="account-wrapper">
+                    <h3 className="account-title">Login</h3>
+                    <p className="account-subtitle">Access to our dashboard</p>
+                    {error && <div className="alert alert-danger alert-dismissible fade show" role="alert">
+                      {error}
+                      <button 
+                        type="button"
+                        className="close"
+                        data-dismiss="alert"
+                        aria-label="Close"
+                        onClick={() => setError(null)}>
+                        <span aria-hidden="true">×</span>
+                      </button>
+                    </div>}
+                    <form onSubmit={handleSubmit(submitForm)}>
+                      <div className="form-group">
+                        <label>Email</label>
+                        <input
+                          className="form-control"
+                          type="email"
+                          {...register("email")}
+                        />
+                        {errors.email && <p className="text-danger">{errors.email.message}</p>}
                       </div>
-                      <div className="col-auto">
-                        <Link className="text-muted" to="/forgot-password">
-                          Forgot password?
-                        </Link>
+                      <div className="form-group">
+                        <div className="row">
+                          <div className="col">
+                            <label>Password</label>
+                          </div>
+                          <div className="col-auto">
+                            <Link className="text-muted" to="/forgot-password">
+                              Forgot password?
+                            </Link>
+                          </div>
+                        </div>
+                        <input
+                          className="form-control"
+                          type="password"
+                          {...register("password")}
+                        />
+                        {errors.password && <p className="text-danger">{errors.password.message}</p>}
                       </div>
-                    </div>
-                    <input
-                      className="form-control"
-                      type="password"
-                      {...register("password")}
-                    />
-                    {errors.password && <p className="text-danger">{errors.password.message}</p>}
+                      <div className="form-group text-center">
+                        <button className="btn btn-primary account-btn" type="submit">
+                          Login
+                          {loading && <Loading />}
+                        </button>
+                      </div>
+                    </form>
                   </div>
-                  <div className="form-group text-center">
-                    <button className="btn btn-primary account-btn" type="submit">
-                      Login
-                      {loading && <Loading />}
-                    </button>
-                  </div>
-                </form>
+                </div>
+          
               </div>
             </div>
-          </div>
+           </div>
         </div>
       </div>
     </div>

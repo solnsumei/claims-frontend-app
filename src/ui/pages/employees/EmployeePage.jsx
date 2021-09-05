@@ -59,8 +59,12 @@ const EmployeePage = () => {
         toast.success("Employee was deleted successfully");
       },
       onError: (error) => {
-        if (error?.response) {
-          toast.error(error.response.data.detail);
+        if (error && error.response) {
+          if (Array.isArray(error.response.data.detail)) {
+            toast.error("Staff still managing projects cannot be deleted");
+          } else {
+            toast.error(error.response.data.detail);
+          }
         }
       }
     });

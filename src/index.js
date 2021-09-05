@@ -10,6 +10,7 @@ import 'select2/dist/js/select2.min';
 import 'font-awesome/css/font-awesome.min.css';
 import 'react-toastify/dist/ReactToastify.css';
 import './ui/styles/index.css';
+import './ui/styles/site.css';
 import './plugins/app';
 import App from './ui/App';
 import { checkAndSetTokenHeader } from './utils/tokenHelper';

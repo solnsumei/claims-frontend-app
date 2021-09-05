@@ -1,5 +1,5 @@
 import $ from 'jquery';
-import { useHistory, useParams } from 'react-router-dom';
+import { useHistory, useParams, useLocation } from 'react-router-dom';
 import { useEffect } from 'react';
 import PageHeader from '../../components/PageHeader';
 import ClaimList from './ClaimList';
@@ -10,6 +10,7 @@ import { headingTitle } from '../../../utils/claimHelpers';
 
 const ClaimsPage = () => {
   const { status } = useParams();
+  const { q } = new URLSearchParams(useLocation().search);
   const history = useHistory();
 
   const { data, isLoading } = useFetchQuery({ key: status ? [types.CLAIMS, status] : types.CLAIMS, url: `/claims${status ? '?status='+status : ''}` });
@@ -33,7 +34,7 @@ const ClaimsPage = () => {
 
       {isLoading && <p>Loading...</p>}
 
-      { data && <ClaimList key={status || 'claims'}
+      { data && <ClaimList key={status || q || 'claims'}
         claimsList={data} tableId="claims-table"
       />}
     </section>

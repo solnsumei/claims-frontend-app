@@ -55,7 +55,7 @@ const ContractorPage = () => {
 
     mutation.mutate(selectedItem.id, {
       onSuccess: () => {
-        queryClient.invalidateQueries(types.EMPLOYEES);
+        queryClient.invalidateQueries(types.CONTRACTORS);
         toast.success("Contractor was deleted successfully");
       },
       onError: (error) => {

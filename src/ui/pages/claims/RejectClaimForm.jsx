@@ -60,7 +60,7 @@ const RejectClaimForm = ({ claim, closeModal }) => {
               label="Reason"
               register={register}
               required={true}
-              error={errors.remark}
+              error={errors?.remark}
               rows={3}
             />
             <div className="submit-section">
